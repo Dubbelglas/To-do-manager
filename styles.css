@@ -116,12 +116,8 @@ h1 {
 }
 
 .primary-btn,
-<<<<<<< HEAD
 .secondary-btn,
 .filter-btn {
-=======
-.secondary-btn {
->>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
     border: none;
     border-radius: 12px;
     cursor: pointer;
@@ -129,12 +125,8 @@ h1 {
 }
 
 .primary-btn:hover,
-<<<<<<< HEAD
 .secondary-btn:hover,
 .filter-btn:hover {
-=======
-.secondary-btn:hover {
->>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
     transform: translateY(-1px);
 }
 
