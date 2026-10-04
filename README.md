@@ -6,6 +6,7 @@ A small front-end to-do manager built with plain HTML, CSS, and JavaScript. It i
 - optional details
 - optional deadlines
 - task completion tracking
+- a separate pane for tasks marked Periodic
 - double-click editing for task details
 - filtering by category
 - clear-completed action
@@ -32,4 +33,4 @@ Then browse to http://localhost:8000.
 
 This project is intentionally lightweight and does not require a build step or external dependencies.
 
-Spreadsheet columns are category, priority (1 = low, 2 = medium, 3 = high, 4 = very high), task, details, and deadline. Imported rows with headers are supported; exported workbooks use the same column order.
+Spreadsheet columns are category, priority (1 = low, 2 = medium, 3 = high, 4 = very high), task, details, deadline, and Periodic. Set Periodic to true, 1, yes, or y to place a task in the Periodiek pane. Imported rows with headers are supported; exported workbooks use the same column order.

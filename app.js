@@ -21,7 +21,9 @@ const newCategoryInput = document.querySelector('#todo-new-category');
 const priorityInput = document.querySelector('#todo-priority');
 const descriptionInput = document.querySelector('#todo-description');
 const deadlineInput = document.querySelector('#todo-deadline');
+const periodicInput = document.querySelector('#todo-periodic');
 const list = document.querySelector('#todo-list');
+const periodicList = document.querySelector('#periodic-todo-list');
 const summary = document.querySelector('#task-summary');
 const clearCompletedButton = document.querySelector('#clear-completed');
 const importButton = document.querySelector('#import-tasks');
@@ -66,10 +68,12 @@ function getPriorityDisplayName(value) {
 }
 
 function normalizeTask(task) {
+    const legacyPeriodicCategory = String(task.category || '').trim().toLocaleLowerCase() === 'periodiek';
     return {
         id: task.id || createId(),
         name: task.name || task.text || '',
-        category: task.category || 'General',
+        category: legacyPeriodicCategory ? 'General' : (task.category || 'General'),
+        periodic: Boolean(task.periodic) || legacyPeriodicCategory,
         priority: normalizePriority(task.priority),
         description: task.description || '',
         deadline: task.deadline || task.dueDate || '',
@@ -155,11 +159,12 @@ function updateNewCategoryVisibility() {
     newCategoryInput.required = showNewCategory;
 }
 
-function createTask(name, priority, description, deadline, category = 'General') {
+function createTask(name, priority, description, deadline, category = 'General', periodic = false) {
     return {
         id: createId(),
         name,
         category: category || 'General',
+        periodic,
         priority: normalizePriority(priority),
         description,
         deadline,
@@ -172,6 +177,10 @@ function getVisibleTasks() {
         ? state.tasks.filter((task) => (task.category || 'General').trim() === state.categoryFilter)
         : state.tasks;
 
+    return sortTasks(tasks.filter((task) => !task.periodic));
+}
+
+function sortTasks(tasks) {
     return [...tasks].sort((a, b) => {
         const primaryKey = state.sortMode === 'deadline' ? 'deadline' : 'priority';
         const secondaryKey = primaryKey === 'priority' ? 'deadline' : 'priority';
@@ -304,6 +313,11 @@ function renderTaskEditor(task) {
                     <input type="date" data-id="${task.id}" data-field="deadline" value="${task.deadline || ''}" />
                 </label>
 
+                <label class="field periodic-toggle">
+                    <span>Periodic</span>
+                    <input type="checkbox" data-id="${task.id}" data-field="periodic" ${task.periodic ? 'checked' : ''} />
+                </label>
+
                 <label class="field field-full">
                     <span>Details</span>
                     <textarea rows="3" data-id="${task.id}" data-field="description">${escapeHtml(task.description)}</textarea>
@@ -344,6 +358,7 @@ function render() {
     refreshCategoryOptions(categorySelect?.value || '');
     refreshCategoryFilterOptions();
     const visibleTasks = getVisibleTasks();
+    const periodicTasks = sortTasks(state.tasks.filter((task) => task.periodic));
     const remaining = state.tasks.filter((task) => !task.completed).length;
 
     if (sortSelect) {
@@ -352,18 +367,17 @@ function render() {
 
     summary.textContent = `${remaining} task${remaining === 1 ? '' : 's'} left`;
 
-    if (!visibleTasks.length) {
-        list.innerHTML = '<li class="empty-state">No tasks in this view yet.</li>';
-        return;
-    }
-
-    list.innerHTML = visibleTasks
-        .map((task) => `
+    const renderTasks = (tasks, emptyMessage) => tasks.length
+        ? tasks.map((task) => `
             <li class="todo-item ${task.completed ? 'is-done' : ''}" data-id="${task.id}">
                 ${state.editingId === task.id ? renderTaskEditor(task) : renderTaskView(task)}
             </li>
         `)
-        .join('');
+        .join('')
+        : `<li class="empty-state">${emptyMessage}</li>`;
+
+    list.innerHTML = renderTasks(visibleTasks, 'No tasks in this view yet.');
+    periodicList.innerHTML = renderTasks(periodicTasks, 'No Periodiek tasks yet.');
 }
 
 form.addEventListener('submit', (event) => {
@@ -385,7 +399,7 @@ form.addEventListener('submit', (event) => {
         selectedCategory = newCategory;
     }
 
-    state.tasks.unshift(createTask(name, priorityInput.value, descriptionInput.value.trim(), deadlineInput.value, selectedCategory));
+    state.tasks.unshift(createTask(name, priorityInput.value, descriptionInput.value.trim(), deadlineInput.value, selectedCategory, periodicInput.checked));
     form.reset();
     priorityInput.value = 'medium';
     refreshCategoryOptions();
@@ -394,7 +408,7 @@ form.addEventListener('submit', (event) => {
     render();
 });
 
-list.addEventListener('change', (event) => {
+for (const taskList of [list, periodicList]) taskList.addEventListener('change', (event) => {
     const checkbox = event.target.closest('input[type="checkbox"][data-action="toggle"]');
     if (!checkbox) {
         return;
@@ -410,7 +424,7 @@ list.addEventListener('change', (event) => {
     render();
 });
 
-list.addEventListener('dblclick', (event) => {
+for (const taskList of [list, periodicList]) taskList.addEventListener('dblclick', (event) => {
     if (event.target.closest('input, button, select, textarea')) {
         return;
     }
@@ -424,7 +438,7 @@ list.addEventListener('dblclick', (event) => {
     render();
 });
 
-list.addEventListener('click', (event) => {
+for (const taskList of [list, periodicList]) taskList.addEventListener('click', (event) => {
     const button = event.target.closest('[data-action]');
     if (!button) {
         return;
@@ -444,11 +458,12 @@ list.addEventListener('click', (event) => {
 
     if (action === 'save-edit') {
         const task = state.tasks[taskIndex];
-        const nameField = list.querySelector(`[data-id="${id}"][data-field="name"]`);
-        const categoryField = list.querySelector(`[data-id="${id}"][data-field="category"]`);
-        const priorityField = list.querySelector(`[data-id="${id}"][data-field="priority"]`);
-        const descriptionField = list.querySelector(`[data-id="${id}"][data-field="description"]`);
-        const deadlineField = list.querySelector(`[data-id="${id}"][data-field="deadline"]`);
+        const nameField = taskList.querySelector(`[data-id="${id}"][data-field="name"]`);
+        const categoryField = taskList.querySelector(`[data-id="${id}"][data-field="category"]`);
+        const priorityField = taskList.querySelector(`[data-id="${id}"][data-field="priority"]`);
+        const descriptionField = taskList.querySelector(`[data-id="${id}"][data-field="description"]`);
+        const deadlineField = taskList.querySelector(`[data-id="${id}"][data-field="deadline"]`);
+        const periodicField = taskList.querySelector(`[data-id="${id}"][data-field="periodic"]`);
         const updatedName = nameField ? nameField.value.trim() : task.name;
 
         if (!updatedName) {
@@ -463,6 +478,7 @@ list.addEventListener('click', (event) => {
         task.priority = normalizePriority(priorityField?.value || task.priority);
         task.description = descriptionField ? descriptionField.value.trim() : task.description;
         task.deadline = deadlineField ? deadlineField.value : task.deadline;
+        task.periodic = periodicField ? periodicField.checked : task.periodic;
 
         state.editingId = null;
         saveTasks();
@@ -521,6 +537,7 @@ importInput.addEventListener('change', async (event) => {
                 const name = String(values[2] ?? '').trim();
                 const description = String(values[3] ?? '').trim();
                 const deadline = normalizeDeadline(values[4]);
+                const periodicValue = String(values[5] ?? '').trim().toLowerCase();
 
                 if (category.toLowerCase() === 'category'
                     && priority.toLowerCase() === 'priority'
@@ -532,7 +549,7 @@ importInput.addEventListener('change', async (event) => {
                     return null;
                 }
 
-                return createTask(name, normalizePriority(priority), description, deadline, category);
+                return createTask(name, normalizePriority(priority), description, deadline, category, ['true', '1', 'yes', 'y'].includes(periodicValue));
             })
             .filter(Boolean);
 
@@ -554,13 +571,14 @@ importInput.addEventListener('change', async (event) => {
 });
 exportButton.addEventListener('click', () => {
     const worksheet = XLSX.utils.aoa_to_sheet([
-        ['Category', 'Priority', 'Task', 'Details', 'Deadline'],
+        ['Category', 'Priority', 'Task', 'Details', 'Deadline', 'Periodic'],
         ...state.tasks.map((task) => [
             task.category || 'General',
             getPriorityNumber(task.priority),
             task.name,
             task.description,
             task.deadline,
+            task.periodic,
         ]),
     ]);
     const workbook = XLSX.utils.book_new();

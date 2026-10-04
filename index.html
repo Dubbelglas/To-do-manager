@@ -45,6 +45,11 @@
                     <input id="todo-deadline" name="deadline" type="date" />
                 </label>
 
+                <label class="field periodic-toggle" for="todo-periodic">
+                    <span>Periodic</span>
+                    <input id="todo-periodic" name="periodic" type="checkbox" />
+                </label>
+
                 <label class="field field-full" for="todo-description">
                     <span>Details</span>
                     <textarea id="todo-description" name="description" rows="3" maxlength="500"
@@ -85,9 +90,15 @@
             </div>
         </section>
 
-        <section class="panel">
+        <details class="panel task-pane" open>
+            <summary class="task-pane-heading">Tasks</summary>
             <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
-        </section>
+        </details>
+
+        <details class="panel task-pane" open>
+            <summary class="task-pane-heading">Periodiek</summary>
+            <ul id="periodic-todo-list" class="todo-list" aria-live="polite"></ul>
+        </details>
     </main>
 
     <script src="xlsx.full.min.js"></script>
