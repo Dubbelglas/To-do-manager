@@ -8,9 +8,9 @@ const PRIORITY_LABELS = {
 
 const state = {
     tasks: loadTasks(),
-    filter: 'all',
     editingId: null,
     sortMode: 'priority',
+    categoryFilter: '',
 };
 
 const form = document.querySelector('#todo-form');
@@ -23,13 +23,12 @@ const descriptionInput = document.querySelector('#todo-description');
 const deadlineInput = document.querySelector('#todo-deadline');
 const list = document.querySelector('#todo-list');
 const summary = document.querySelector('#task-summary');
-const filterButtons = document.querySelectorAll('.filter-btn');
 const clearCompletedButton = document.querySelector('#clear-completed');
 const importButton = document.querySelector('#import-tasks');
 const importInput = document.querySelector('#import-file');
 const exportButton = document.querySelector('#export-tasks');
 const sortSelect = document.querySelector('#sort-tasks');
-const sortButton = document.querySelector('#apply-sort');
+const categoryFilterSelect = document.querySelector('#category-filter');
 
 const PRIORITY_ORDER = {
     low: 1,
@@ -130,6 +129,19 @@ function refreshCategoryOptions(selectedValue = '') {
     updateNewCategoryVisibility();
 }
 
+function refreshCategoryFilterOptions() {
+    const categories = getCategories();
+    if (!categories.includes(state.categoryFilter)) {
+        state.categoryFilter = '';
+    }
+
+    categoryFilterSelect.innerHTML = [
+        '<option value="">--All--</option>',
+        ...categories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`),
+    ].join('');
+    categoryFilterSelect.value = state.categoryFilter;
+}
+
 function updateNewCategoryVisibility() {
     const showNewCategory = categorySelect.value === '__new__';
     newCategoryWrap.classList.toggle('hidden', !showNewCategory);
@@ -149,21 +161,11 @@ function createTask(name, priority, description, deadline, category = 'General')
 }
 
 function getVisibleTasks() {
-    const visibleTasks = [];
+    const tasks = state.categoryFilter
+        ? state.tasks.filter((task) => (task.category || 'General').trim() === state.categoryFilter)
+        : state.tasks;
 
-    switch (state.filter) {
-        case 'active':
-            visibleTasks.push(...state.tasks.filter((task) => !task.completed));
-            break;
-        case 'completed':
-            visibleTasks.push(...state.tasks.filter((task) => task.completed));
-            break;
-        default:
-            visibleTasks.push(...state.tasks);
-            break;
-    }
-
-    return [...visibleTasks].sort((a, b) => {
+    return [...tasks].sort((a, b) => {
         const primaryKey = state.sortMode === 'deadline' ? 'deadline' : 'priority';
         const secondaryKey = primaryKey === 'priority' ? 'deadline' : 'priority';
 
@@ -267,7 +269,7 @@ function renderTaskEditor(task) {
         <div class="task-editor">
             <div class="editor-grid">
                 <label class="field field-wide">
-                    <span>Name</span>
+                    <span>Task</span>
                     <input type="text" data-id="${task.id}" data-field="name" value="${escapeHtml(task.name)}" required />
                 </label>
 
@@ -292,7 +294,7 @@ function renderTaskEditor(task) {
                 </label>
 
                 <label class="field field-full">
-                    <span>Explanation</span>
+                    <span>Details</span>
                     <textarea rows="3" data-id="${task.id}" data-field="description">${escapeHtml(task.description)}</textarea>
                 </label>
             </div>
@@ -328,6 +330,8 @@ function renderTaskView(task) {
 }
 
 function render() {
+    refreshCategoryOptions(categorySelect?.value || '');
+    refreshCategoryFilterOptions();
     const visibleTasks = getVisibleTasks();
     const remaining = state.tasks.filter((task) => !task.completed).length;
 
@@ -336,13 +340,6 @@ function render() {
     }
 
     summary.textContent = `${remaining} task${remaining === 1 ? '' : 's'} left`;
-
-    filterButtons.forEach((button) => {
-        const active = button.dataset.filter === state.filter;
-        button.classList.toggle('is-active', active);
-    });
-
-    refreshCategoryOptions(categorySelect?.value || '');
 
     if (!visibleTasks.length) {
         list.innerHTML = '<li class="empty-state">No tasks in this view yet.</li>';
@@ -477,13 +474,6 @@ list.addEventListener('input', (event) => {
     saveTasks();
 });
 
-filterButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-        state.filter = button.dataset.filter;
-        render();
-    });
-});
-
 clearCompletedButton.addEventListener('click', () => {
     state.tasks = state.tasks.filter((task) => !task.completed);
     state.editingId = null;
@@ -491,13 +481,13 @@ clearCompletedButton.addEventListener('click', () => {
     render();
 });
 
-sortButton?.addEventListener('click', () => {
-    state.sortMode = sortSelect?.value || state.sortMode;
+sortSelect?.addEventListener('change', () => {
+    state.sortMode = sortSelect.value;
     render();
 });
 
-sortSelect?.addEventListener('change', () => {
-    state.sortMode = sortSelect.value;
+categoryFilterSelect.addEventListener('change', () => {
+    state.categoryFilter = categoryFilterSelect.value;
     render();
 });
 
@@ -538,7 +528,11 @@ importInput.addEventListener('change', async (event) => {
 
                 if (category.toLowerCase() === 'category'
                     && priority.toLowerCase() === 'priority'
+<<<<<<< HEAD
                     && ['name', 'task name'].includes(name.toLowerCase())) {
+=======
+                    && ['name', 'task', 'task name'].includes(name.toLowerCase())) {
+>>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
                     return null;
                 }
 
@@ -551,7 +545,11 @@ importInput.addEventListener('change', async (event) => {
             .filter(Boolean);
 
         if (!importedTasks.length) {
+<<<<<<< HEAD
             alert('No valid rows were found in the selected file. Use columns: category, priority, task name, explanation, deadline.');
+=======
+            alert('No valid rows were found in the selected file. Use columns: category, priority, task, details, deadline.');
+>>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
             return;
         }
 
@@ -566,7 +564,11 @@ importInput.addEventListener('change', async (event) => {
 });
 exportButton.addEventListener('click', () => {
     const worksheet = XLSX.utils.aoa_to_sheet([
+<<<<<<< HEAD
         ['Category', 'Priority', 'Task name', 'Explanation', 'Deadline'],
+=======
+        ['Category', 'Priority', 'Task', 'Details', 'Deadline'],
+>>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
         ...state.tasks.map((task) => [
             task.category || 'General',
             getPriorityNumber(task.priority),

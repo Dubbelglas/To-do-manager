@@ -20,7 +20,7 @@
         <section class="panel">
             <form id="todo-form" class="todo-form">
                 <label class="field field-wide" for="todo-name">
-                    <span>Task name</span>
+                    <span>Task</span>
                     <input id="todo-name" name="name" type="text" maxlength="160" placeholder="What needs to be done?"
                         required />
                 </label>
@@ -33,10 +33,10 @@
                 <label class="field" for="todo-priority">
                     <span>Priority</span>
                     <select id="todo-priority" name="priority">
-                        <option value="low">Low priority</option>
-                        <option value="medium" selected>Medium priority</option>
-                        <option value="high">High priority</option>
-                        <option value="very-high">Very high priority</option>
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="very-high">Very high</option>
                     </select>
                 </label>
 
@@ -46,7 +46,7 @@
                 </label>
 
                 <label class="field field-full" for="todo-description">
-                    <span>Explanation</span>
+                    <span>Details</span>
                     <textarea id="todo-description" name="description" rows="3" maxlength="500"
                         placeholder="Add more detail if needed"></textarea>
                 </label>
@@ -64,21 +64,20 @@
         <section class="panel toolbar" aria-label="Todo controls">
             <p id="task-summary">0 tasks left</p>
 
-            <div class="filters" aria-label="Filter tasks">
-                <button class="filter-btn is-active" type="button" data-filter="all">All</button>
-                <button class="filter-btn" type="button" data-filter="active">Active</button>
-                <button class="filter-btn" type="button" data-filter="completed">Completed</button>
-            </div>
-
             <div class="toolbar-actions">
+                <label class="sort-control" for="category-filter">
+                    <span>Category</span>
+                    <select id="category-filter" name="category-filter">
+                        <option value="">--All--</option>
+                    </select>
+                </label>
                 <label class="sort-control" for="sort-tasks">
                     <span>Sort</span>
                     <select id="sort-tasks" name="sort-tasks">
-                        <option value="priority">Priority (high to low)</option>
-                        <option value="deadline">Deadline (early to late)</option>
+                        <option value="priority">Priority</option>
+                        <option value="deadline">Deadline</option>
                     </select>
                 </label>
-                <button id="apply-sort" type="button" class="secondary-btn">Sort tasks</button>
                 <button id="import-tasks" type="button" class="secondary-btn">Import .xlsx</button>
                 <input id="import-file" type="file" accept=".xlsx,.xls,.csv" hidden />
                 <button id="export-tasks" type="button" class="secondary-btn">Export .xlsx</button>

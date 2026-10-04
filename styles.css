@@ -116,8 +116,12 @@ h1 {
 }
 
 .primary-btn,
+<<<<<<< HEAD
 .secondary-btn,
 .filter-btn {
+=======
+.secondary-btn {
+>>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
     border: none;
     border-radius: 12px;
     cursor: pointer;
@@ -125,8 +129,12 @@ h1 {
 }
 
 .primary-btn:hover,
+<<<<<<< HEAD
 .secondary-btn:hover,
 .filter-btn:hover {
+=======
+.secondary-btn:hover {
+>>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
     transform: translateY(-1px);
 }
 
@@ -180,25 +188,6 @@ h1 {
     margin: 0;
     color: var(--text-soft);
     font-weight: 600;
-}
-
-.filters {
-    display: inline-flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.filter-btn {
-    padding: 8px 12px;
-    background: rgba(148, 163, 184, 0.12);
-    color: var(--text-soft);
-    border: 1px solid transparent;
-}
-
-.filter-btn.is-active {
-    background: rgba(56, 189, 248, 0.18);
-    border-color: rgba(56, 189, 248, 0.55);
-    color: var(--text);
 }
 
 .secondary-btn {
@@ -365,7 +354,6 @@ h1 {
         align-items: stretch;
     }
 
-    .filter-btn,
     .secondary-btn,
     .primary-btn,
     .task-actions button {
