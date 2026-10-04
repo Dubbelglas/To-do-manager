@@ -27,6 +27,7 @@ const filterButtons = document.querySelectorAll('.filter-btn');
 const clearCompletedButton = document.querySelector('#clear-completed');
 const importButton = document.querySelector('#import-tasks');
 const importInput = document.querySelector('#import-file');
+const exportButton = document.querySelector('#export-tasks');
 const sortSelect = document.querySelector('#sort-tasks');
 const sortButton = document.querySelector('#apply-sort');
 
@@ -135,17 +136,6 @@ function updateNewCategoryVisibility() {
     newCategoryInput.required = showNewCategory;
 }
 
-function getImportCellValue(row, candidateKeys, fallbackIndex) {
-    const keys = candidateKeys.map((key) => String(key).toLowerCase());
-    const match = Object.keys(row).find((key) => keys.includes(String(key).toLowerCase()));
-
-    if (match) {
-        return row[match];
-    }
-
-    return row[fallbackIndex] ?? '';
-}
-
 function createTask(name, priority, description, deadline, category = 'General') {
     return {
         id: createId(),
@@ -210,6 +200,39 @@ function compareDeadlineValues(taskA, taskB) {
     }
 
     return new Date(`${taskA.deadline}T00:00:00`) - new Date(`${taskB.deadline}T00:00:00`);
+}
+
+function normalizeDeadline(value) {
+    if (!value) {
+        return '';
+    }
+
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+        return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, '0')}-${String(value.getDate()).padStart(2, '0')}`;
+    }
+
+    if (typeof value === 'number') {
+        const parsed = XLSX.SSF.parse_date_code(value);
+        if (parsed) {
+            return `${parsed.y}-${String(parsed.m).padStart(2, '0')}-${String(parsed.d).padStart(2, '0')}`;
+        }
+    }
+
+    const stringValue = String(value).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(stringValue)) {
+        return stringValue;
+    }
+
+    const parsedDate = new Date(stringValue);
+    if (Number.isNaN(parsedDate.getTime())) {
+        return '';
+    }
+
+    return `${parsedDate.getFullYear()}-${String(parsedDate.getMonth() + 1).padStart(2, '0')}-${String(parsedDate.getDate()).padStart(2, '0')}`;
+}
+
+function getPriorityNumber(priority) {
+    return PRIORITY_ORDER[normalizePriority(priority)];
 }
 
 function formatDate(dateValue) {
@@ -300,10 +323,6 @@ function renderTaskView(task) {
 
             ${task.description ? `<p class="task-description">${escapeHtml(task.description)}</p>` : ''}
 
-            <div class="task-actions">
-                <button type="button" class="action-btn edit-btn" data-action="edit" data-id="${task.id}">Edit</button>
-                <button type="button" class="delete-btn" data-action="delete" data-id="${task.id}">Delete</button>
-            </div>
         </div>
     `;
 }
@@ -332,7 +351,7 @@ function render() {
 
     list.innerHTML = visibleTasks
         .map((task) => `
-            <li class="todo-item ${task.completed ? 'is-done' : ''}">
+            <li class="todo-item ${task.completed ? 'is-done' : ''}" data-id="${task.id}">
                 ${state.editingId === task.id ? renderTaskEditor(task) : renderTaskView(task)}
             </li>
         `)
@@ -383,6 +402,20 @@ list.addEventListener('change', (event) => {
     render();
 });
 
+list.addEventListener('dblclick', (event) => {
+    if (event.target.closest('input, button, select, textarea')) {
+        return;
+    }
+
+    const item = event.target.closest('.todo-item');
+    if (!item || state.editingId) {
+        return;
+    }
+
+    state.editingId = item.dataset.id;
+    render();
+});
+
 list.addEventListener('click', (event) => {
     const button = event.target.closest('[data-action]');
     if (!button) {
@@ -392,22 +425,6 @@ list.addEventListener('click', (event) => {
     const { action, id } = button.dataset;
     const taskIndex = state.tasks.findIndex((task) => task.id === id);
     if (taskIndex === -1) {
-        return;
-    }
-
-    if (action === 'delete') {
-        state.tasks.splice(taskIndex, 1);
-        if (state.editingId === id) {
-            state.editingId = null;
-        }
-        saveTasks();
-        render();
-        return;
-    }
-
-    if (action === 'edit') {
-        state.editingId = id;
-        render();
         return;
     }
 
@@ -504,7 +521,7 @@ importInput.addEventListener('change', async (event) => {
     try {
         const workbook = XLSX.read(await file.arrayBuffer(), { type: 'array' });
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(firstSheet, { raw: false, defval: '', header: 1 });
+        const rows = XLSX.utils.sheet_to_json(firstSheet, { raw: true, defval: '', header: 1 });
 
         const importedTasks = rows
             .map((row) => {
@@ -516,8 +533,12 @@ importInput.addEventListener('change', async (event) => {
                 const category = String(values[0] ?? '').trim();
                 const priority = String(values[1] ?? '').trim();
                 const name = String(values[2] ?? '').trim();
+                const description = String(values[3] ?? '').trim();
+                const deadline = normalizeDeadline(values[4]);
 
-                if (['category', 'priority', 'name'].includes(category.toLowerCase()) && ['category', 'priority', 'name'].includes(priority.toLowerCase())) {
+                if (category.toLowerCase() === 'category'
+                    && priority.toLowerCase() === 'priority'
+                    && ['name', 'task name'].includes(name.toLowerCase())) {
                     return null;
                 }
 
@@ -525,12 +546,12 @@ importInput.addEventListener('change', async (event) => {
                     return null;
                 }
 
-                return createTask(name, normalizePriority(priority), '', '', category);
+                return createTask(name, normalizePriority(priority), description, deadline, category);
             })
             .filter(Boolean);
 
         if (!importedTasks.length) {
-            alert('No valid rows were found in the selected file. Use columns: category, priority, name.');
+            alert('No valid rows were found in the selected file. Use columns: category, priority, task name, explanation, deadline.');
             return;
         }
 
@@ -542,6 +563,21 @@ importInput.addEventListener('change', async (event) => {
         console.error('Unable to import tasks:', error);
         alert('The file could not be read. Please make sure it is a valid .xlsx, .xls, or .csv spreadsheet.');
     }
+});
+exportButton.addEventListener('click', () => {
+    const worksheet = XLSX.utils.aoa_to_sheet([
+        ['Category', 'Priority', 'Task name', 'Explanation', 'Deadline'],
+        ...state.tasks.map((task) => [
+            task.category || 'General',
+            getPriorityNumber(task.priority),
+            task.name,
+            task.description,
+            task.deadline,
+        ]),
+    ]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Tasks');
+    XLSX.writeFile(workbook, 'tasks.xlsx');
 });
 
 refreshCategoryOptions();

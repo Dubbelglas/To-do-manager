@@ -117,9 +117,7 @@ h1 {
 
 .primary-btn,
 .secondary-btn,
-.filter-btn,
-.delete-btn,
-.action-btn {
+.filter-btn {
     border: none;
     border-radius: 12px;
     cursor: pointer;
@@ -128,9 +126,7 @@ h1 {
 
 .primary-btn:hover,
 .secondary-btn:hover,
-.filter-btn:hover,
-.delete-btn:hover,
-.action-btn:hover {
+.filter-btn:hover {
     transform: translateY(-1px);
 }
 
@@ -143,8 +139,7 @@ h1 {
 }
 
 .primary-btn.small,
-.secondary-btn.small,
-.action-btn {
+.secondary-btn.small {
     padding: 8px 12px;
 }
 
@@ -288,17 +283,6 @@ h1 {
     flex-wrap: wrap;
 }
 
-.action-btn {
-    background: rgba(56, 189, 248, 0.12);
-    color: var(--text);
-}
-
-.delete-btn {
-    padding: 8px 12px;
-    background: rgba(239, 68, 68, 0.12);
-    color: #fecaca;
-}
-
 .badge {
     display: inline-flex;
     align-items: center;
@@ -384,8 +368,7 @@ h1 {
     .filter-btn,
     .secondary-btn,
     .primary-btn,
-    .action-btn,
-    .delete-btn {
+    .task-actions button {
         width: 100%;
     }
 
