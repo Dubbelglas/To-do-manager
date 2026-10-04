@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do Manager</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <main class="app-shell">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Productivity</p>
+                <h1>To-Do Manager</h1>
+            </div>
+        </header>
+
+        <section class="panel">
+            <form id="todo-form" class="todo-form">
+                <label class="sr-only" for="todo-input">Task</label>
+                <input id="todo-input" name="todo" type="text" maxlength="160" placeholder="What needs to be done?"
+                    required />
+
+                <label class="sr-only" for="todo-date">Due date</label>
+                <input id="todo-date" name="dueDate" type="date" />
+
+                <label class="sr-only" for="todo-priority">Priority</label>
+                <select id="todo-priority" name="priority">
+                    <option value="low">Low priority</option>
+                    <option value="medium" selected>Medium priority</option>
+                    <option value="high">High priority</option>
+                </select>
+
+                <button type="submit" class="primary-btn">Add task</button>
+            </form>
+        </section>
+
+        <section class="panel toolbar" aria-label="Todo controls">
+            <p id="task-summary">0 tasks left</p>
+
+            <div class="filters" aria-label="Filter tasks">
+                <button class="filter-btn is-active" type="button" data-filter="all">All</button>
+                <button class="filter-btn" type="button" data-filter="active">Active</button>
+                <button class="filter-btn" type="button" data-filter="completed">Completed</button>
+            </div>
+
+            <button id="clear-completed" type="button" class="secondary-btn">Clear completed</button>
+        </section>
+
+        <section class="panel">
+            <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
