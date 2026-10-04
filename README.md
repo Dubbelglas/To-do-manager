@@ -2,13 +2,14 @@
 
 A small front-end to-do manager built with plain HTML, CSS, and JavaScript. It includes:
 
-- add new tasks
-- set a due date and priority
-- mark tasks as complete or active
-- filter by all, active, and completed
-- delete individual tasks
-- clear completed tasks
-- save tasks in the browser with localStorage
+- a task name and priority for each item
+- optional longer explanations
+- optional deadlines
+- task completion tracking
+- inline editing for task details
+- filtering by all, active, and completed items
+- delete and clear-completed actions
+- automatic browser persistence with localStorage whenever tasks are added or updated
 
 ## Run locally
 

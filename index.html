@@ -19,19 +19,31 @@
 
         <section class="panel">
             <form id="todo-form" class="todo-form">
-                <label class="sr-only" for="todo-input">Task</label>
-                <input id="todo-input" name="todo" type="text" maxlength="160" placeholder="What needs to be done?"
-                    required />
+                <label class="field field-wide" for="todo-name">
+                    <span>Task name</span>
+                    <input id="todo-name" name="name" type="text" maxlength="160" placeholder="What needs to be done?"
+                        required />
+                </label>
 
-                <label class="sr-only" for="todo-date">Due date</label>
-                <input id="todo-date" name="dueDate" type="date" />
+                <label class="field" for="todo-priority">
+                    <span>Priority</span>
+                    <select id="todo-priority" name="priority">
+                        <option value="low">Low priority</option>
+                        <option value="medium" selected>Medium priority</option>
+                        <option value="high">High priority</option>
+                    </select>
+                </label>
 
-                <label class="sr-only" for="todo-priority">Priority</label>
-                <select id="todo-priority" name="priority">
-                    <option value="low">Low priority</option>
-                    <option value="medium" selected>Medium priority</option>
-                    <option value="high">High priority</option>
-                </select>
+                <label class="field" for="todo-deadline">
+                    <span>Deadline</span>
+                    <input id="todo-deadline" name="deadline" type="date" />
+                </label>
+
+                <label class="field field-full" for="todo-description">
+                    <span>Explanation</span>
+                    <textarea id="todo-description" name="description" rows="3" maxlength="500"
+                        placeholder="Add more detail if needed"></textarea>
+                </label>
 
                 <button type="submit" class="primary-btn">Add task</button>
             </form>

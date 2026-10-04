@@ -30,12 +30,13 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
     font: inherit;
 }
 
 .app-shell {
-    width: min(760px, calc(100vw - 24px));
+    width: min(840px, calc(100vw - 24px));
     padding: 24px 0 32px;
 }
 
@@ -67,13 +68,34 @@ h1 {
 
 .todo-form {
     display: grid;
-    grid-template-columns: minmax(0, 2.4fr) minmax(150px, 1fr) minmax(150px, 1fr) auto;
+    grid-template-columns: minmax(0, 2.2fr) minmax(170px, 1fr) minmax(170px, 1fr);
     gap: 12px;
     padding: 18px;
 }
 
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--text-soft);
+}
+
+.field span {
+    font-weight: 600;
+}
+
+.field-wide,
+.field-full {
+    grid-column: 1 / -1;
+}
+
 .todo-form input,
-.todo-form select {
+.todo-form select,
+.todo-form textarea,
+.task-editor input,
+.task-editor select,
+.task-editor textarea {
     width: 100%;
     padding: 12px 14px;
     border: 1px solid rgba(148, 163, 184, 0.35);
@@ -82,14 +104,22 @@ h1 {
     color: var(--text);
 }
 
-.todo-form input::placeholder {
+.todo-form textarea,
+.task-editor textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.todo-form input::placeholder,
+.todo-form textarea::placeholder {
     color: var(--text-soft);
 }
 
 .primary-btn,
 .secondary-btn,
 .filter-btn,
-.delete-btn {
+.delete-btn,
+.action-btn {
     border: none;
     border-radius: 12px;
     cursor: pointer;
@@ -99,15 +129,23 @@ h1 {
 .primary-btn:hover,
 .secondary-btn:hover,
 .filter-btn:hover,
-.delete-btn:hover {
+.delete-btn:hover,
+.action-btn:hover {
     transform: translateY(-1px);
 }
 
 .primary-btn {
+    align-self: end;
     padding: 12px 18px;
     font-weight: 700;
     background: linear-gradient(135deg, var(--accent), var(--accent-strong));
     color: white;
+}
+
+.primary-btn.small,
+.secondary-btn.small,
+.action-btn {
+    padding: 8px 12px;
 }
 
 .toolbar {
@@ -157,10 +195,6 @@ h1 {
 }
 
 .todo-item {
-    display: grid;
-    grid-template-columns: minmax(0, 1.8fr) auto auto;
-    align-items: center;
-    gap: 16px;
     padding: 16px 18px;
     border-top: 1px solid rgba(148, 163, 184, 0.15);
 }
@@ -174,11 +208,25 @@ h1 {
     color: var(--text-soft);
 }
 
+.task-card,
+.task-editor {
+    display: grid;
+    gap: 12px;
+}
+
+.task-main-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
 .todo-main {
     display: flex;
     align-items: center;
     gap: 12px;
     min-width: 0;
+    flex: 1;
 }
 
 .todo-main input[type="checkbox"] {
@@ -189,6 +237,7 @@ h1 {
 
 .todo-text {
     word-break: break-word;
+    font-weight: 700;
 }
 
 .meta {
@@ -197,6 +246,33 @@ h1 {
     gap: 8px;
     flex-wrap: wrap;
     justify-content: flex-end;
+}
+
+.task-description {
+    margin: 0;
+    line-height: 1.5;
+    color: var(--text-soft);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.task-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--text);
+}
+
+.delete-btn {
+    padding: 8px 12px;
+    background: rgba(239, 68, 68, 0.12);
+    color: #fecaca;
 }
 
 .badge {
@@ -208,6 +284,7 @@ h1 {
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.02em;
+    text-transform: capitalize;
 }
 
 .badge.low {
@@ -230,10 +307,10 @@ h1 {
     color: var(--text-soft);
 }
 
-.delete-btn {
-    padding: 8px 12px;
-    background: rgba(239, 68, 68, 0.12);
-    color: #fecaca;
+.editor-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+    gap: 12px;
 }
 
 .empty-state {
@@ -255,7 +332,9 @@ h1 {
 }
 
 @media (max-width: 640px) {
-    .todo-form {
+
+    .todo-form,
+    .editor-grid {
         grid-template-columns: 1fr;
     }
 
@@ -266,16 +345,19 @@ h1 {
 
     .filter-btn,
     .secondary-btn,
-    .primary-btn {
+    .primary-btn,
+    .action-btn,
+    .delete-btn {
         width: 100%;
     }
 
-    .todo-item {
-        grid-template-columns: 1fr;
+    .task-main-row {
+        flex-direction: column;
         align-items: flex-start;
     }
 
-    .meta {
+    .meta,
+    .task-actions {
         justify-content: flex-start;
     }
 }
