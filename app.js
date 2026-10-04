@@ -92,7 +92,14 @@ function loadTasks() {
 }
 
 function saveTasks() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.tasks));
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.tasks));
+        return true;
+    } catch (error) {
+        console.error('Unable to save tasks:', error);
+        alert('Tasks changed in this session but could not be saved in this browser.');
+        return false;
+    }
 }
 
 function escapeHtml(value) {
@@ -222,7 +229,11 @@ function normalizeDeadline(value) {
 
     const stringValue = String(value).trim();
     if (/^\d{4}-\d{2}-\d{2}$/.test(stringValue)) {
-        return stringValue;
+        const [year, month, day] = stringValue.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
+            ? stringValue
+            : '';
     }
 
     const parsedDate = new Date(stringValue);
@@ -459,21 +470,6 @@ list.addEventListener('click', (event) => {
     }
 });
 
-list.addEventListener('input', (event) => {
-    const field = event.target.closest('[data-field]');
-    if (!field) {
-        return;
-    }
-
-    const task = state.tasks.find((item) => item.id === field.dataset.id);
-    if (!task) {
-        return;
-    }
-
-    task[field.dataset.field] = field.value;
-    saveTasks();
-});
-
 clearCompletedButton.addEventListener('click', () => {
     state.tasks = state.tasks.filter((task) => !task.completed);
     state.editingId = null;
@@ -528,11 +524,7 @@ importInput.addEventListener('change', async (event) => {
 
                 if (category.toLowerCase() === 'category'
                     && priority.toLowerCase() === 'priority'
-<<<<<<< HEAD
-                    && ['name', 'task name'].includes(name.toLowerCase())) {
-=======
                     && ['name', 'task', 'task name'].includes(name.toLowerCase())) {
->>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
                     return null;
                 }
 
@@ -545,11 +537,7 @@ importInput.addEventListener('change', async (event) => {
             .filter(Boolean);
 
         if (!importedTasks.length) {
-<<<<<<< HEAD
-            alert('No valid rows were found in the selected file. Use columns: category, priority, task name, explanation, deadline.');
-=======
             alert('No valid rows were found in the selected file. Use columns: category, priority, task, details, deadline.');
->>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
             return;
         }
 
@@ -560,15 +548,13 @@ importInput.addEventListener('change', async (event) => {
     } catch (error) {
         console.error('Unable to import tasks:', error);
         alert('The file could not be read. Please make sure it is a valid .xlsx, .xls, or .csv spreadsheet.');
+    } finally {
+        importInput.value = '';
     }
 });
 exportButton.addEventListener('click', () => {
     const worksheet = XLSX.utils.aoa_to_sheet([
-<<<<<<< HEAD
-        ['Category', 'Priority', 'Task name', 'Explanation', 'Deadline'],
-=======
         ['Category', 'Priority', 'Task', 'Details', 'Deadline'],
->>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
         ...state.tasks.map((task) => [
             task.category || 'General',
             getPriorityNumber(task.priority),

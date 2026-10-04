@@ -7,10 +7,7 @@ A small front-end to-do manager built with plain HTML, CSS, and JavaScript. It i
 - optional deadlines
 - task completion tracking
 - double-click editing for task details
-<<<<<<< HEAD
-- filtering by all, active, and completed items
-=======
->>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
+- filtering by category
 - clear-completed action
 - import and export in `.xlsx` format
 - automatic browser persistence with localStorage whenever tasks are added or updated
@@ -35,8 +32,4 @@ Then browse to http://localhost:8000.
 
 This project is intentionally lightweight and does not require a build step or external dependencies.
 
-<<<<<<< HEAD
-Spreadsheet columns are category, priority (1 = low, 2 = medium, 3 = high, 4 = very high), task name, explanation, and deadline. Imported rows with headers are supported; exported workbooks use the same column order.
-=======
 Spreadsheet columns are category, priority (1 = low, 2 = medium, 3 = high, 4 = very high), task, details, and deadline. Imported rows with headers are supported; exported workbooks use the same column order.
->>>>>>> 722d308 (Zichtbaar per categorie; labels opschonen)
