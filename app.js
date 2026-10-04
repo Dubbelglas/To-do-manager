@@ -26,6 +26,7 @@ const list = document.querySelector('#todo-list');
 const periodicList = document.querySelector('#periodic-todo-list');
 const summary = document.querySelector('#task-summary');
 const clearCompletedButton = document.querySelector('#clear-completed');
+const completeVisibleButton = document.querySelector('#complete-visible');
 const importButton = document.querySelector('#import-tasks');
 const importInput = document.querySelector('#import-file');
 const exportButton = document.querySelector('#export-tasks');
@@ -489,6 +490,20 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('click', 
 clearCompletedButton.addEventListener('click', () => {
     state.tasks = state.tasks.filter((task) => !task.completed);
     state.editingId = null;
+    saveTasks();
+    render();
+});
+
+completeVisibleButton.addEventListener('click', () => {
+    const visibleTasks = [...getVisibleTasks(), ...state.tasks.filter((task) => task.periodic)];
+    if (!visibleTasks.length) {
+        return;
+    }
+
+    const markDone = visibleTasks.some((task) => !task.completed);
+    visibleTasks.forEach((task) => {
+        task.completed = markDone;
+    });
     saveTasks();
     render();
 });
