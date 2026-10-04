@@ -25,12 +25,18 @@
                         required />
                 </label>
 
+                <label class="field" for="todo-category">
+                    <span>Category</span>
+                    <select id="todo-category" name="category"></select>
+                </label>
+
                 <label class="field" for="todo-priority">
                     <span>Priority</span>
                     <select id="todo-priority" name="priority">
                         <option value="low">Low priority</option>
                         <option value="medium" selected>Medium priority</option>
                         <option value="high">High priority</option>
+                        <option value="very-high">Very high priority</option>
                     </select>
                 </label>
 
@@ -43,6 +49,12 @@
                     <span>Explanation</span>
                     <textarea id="todo-description" name="description" rows="3" maxlength="500"
                         placeholder="Add more detail if needed"></textarea>
+                </label>
+
+                <label id="todo-new-category-wrap" class="field field-full hidden" for="todo-new-category">
+                    <span>New category</span>
+                    <input id="todo-new-category" name="newCategory" type="text" maxlength="60"
+                        placeholder="Type a new category name" />
                 </label>
 
                 <button type="submit" class="primary-btn">Add task</button>
@@ -58,7 +70,19 @@
                 <button class="filter-btn" type="button" data-filter="completed">Completed</button>
             </div>
 
-            <button id="clear-completed" type="button" class="secondary-btn">Clear completed</button>
+            <div class="toolbar-actions">
+                <label class="sort-control" for="sort-tasks">
+                    <span>Sort</span>
+                    <select id="sort-tasks" name="sort-tasks">
+                        <option value="priority">Priority (high to low)</option>
+                        <option value="deadline">Deadline (early to late)</option>
+                    </select>
+                </label>
+                <button id="apply-sort" type="button" class="secondary-btn">Sort tasks</button>
+                <button id="import-tasks" type="button" class="secondary-btn">Import .xlsx</button>
+                <input id="import-file" type="file" accept=".xlsx,.xls,.csv" hidden />
+                <button id="clear-completed" type="button" class="secondary-btn">Clear completed</button>
+            </div>
         </section>
 
         <section class="panel">
@@ -66,6 +90,7 @@
         </section>
     </main>
 
+    <script src="xlsx.full.min.js"></script>
     <script src="app.js"></script>
 </body>
 
