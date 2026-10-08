@@ -39,8 +39,37 @@ const taskDialog = document.querySelector('#task-dialog');
 const dialogTitle = document.querySelector('#task-dialog-title');
 const submitTaskButton = document.querySelector('#submit-task');
 const confirmationBanner = document.querySelector('#confirmation-banner');
+const fireworksLayer = document.querySelector('#fireworks-layer');
 let categoryValidationAttempted = false;
 let confirmationTimer = null;
+
+function launchFireworks(origin) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const rect = origin.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2;
+    const originY = rect.top + rect.height / 2;
+    const colors = ['#facc15', '#84cc16', '#f97316', '#f0f1eb'];
+
+    for (let burst = 0; burst < 2; burst += 1) {
+        const centerX = originX + (burst === 0 ? -16 : 16);
+        const centerY = originY - 12;
+        for (let index = 0; index < 14; index += 1) {
+            const angle = (Math.PI * 2 * index) / 14 + Math.random() * 0.16;
+            const distance = 28 + Math.random() * 42;
+            const particle = document.createElement('span');
+            particle.className = 'firework-particle';
+            particle.style.setProperty('--firework-x', `${centerX}px`);
+            particle.style.setProperty('--firework-y', `${centerY}px`);
+            particle.style.setProperty('--firework-dx', `${Math.cos(angle) * distance}px`);
+            particle.style.setProperty('--firework-dy', `${Math.sin(angle) * distance}px`);
+            particle.style.setProperty('--firework-color', colors[Math.floor(Math.random() * colors.length)]);
+            particle.style.setProperty('--firework-delay', `${burst * 100}ms`);
+            fireworksLayer.append(particle);
+            window.setTimeout(() => particle.remove(), 1000);
+        }
+    }
+}
 
 function showConfirmation(message) {
     confirmationBanner.textContent = message;
@@ -501,6 +530,7 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('change',
     }
 
     task.completed = checkbox.checked;
+    if (task.completed) launchFireworks(checkbox);
     saveTasks();
     render();
 });
@@ -551,6 +581,7 @@ completeVisibleButton.addEventListener('click', () => {
     visibleTasks.forEach((task) => {
         task.completed = markDone;
     });
+    if (markDone) launchFireworks(completeVisibleButton);
     saveTasks();
     render();
 });
