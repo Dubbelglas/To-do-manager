@@ -575,6 +575,7 @@ h1 {
     .toolbar {
         flex-direction: column;
         align-items: stretch;
+        padding: 10px;
     }
 
     .secondary-btn,
@@ -585,16 +586,24 @@ h1 {
 
     .toolbar-actions {
         width: 100%;
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        gap: 6px;
     }
 
     .toolbar-icon-actions {
-        width: 100%;
+        width: auto;
+        flex: 0 0 auto;
         justify-content: flex-start;
+        gap: 4px;
     }
 
     .toolbar-icon-actions .icon-btn {
-        width: 44px;
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        padding: 8px;
     }
 
     .sort-control {
@@ -608,8 +617,8 @@ h1 {
     }
 
     .sort-slider {
-        width: 108px;
-        min-width: 108px;
+        width: 90px;
+        min-width: 90px;
     }
 
     .task-main-row {
@@ -624,6 +633,32 @@ h1 {
 
     .task-actions {
         justify-content: flex-start;
+    }
+}
+
+@media (max-width: 360px) {
+    .toolbar {
+        padding: 8px;
+    }
+
+    .toolbar-actions {
+        gap: 4px;
+    }
+
+    .toolbar-icon-actions {
+        gap: 3px;
+    }
+
+    .toolbar-icon-actions .icon-btn {
+        width: 36px;
+        min-width: 36px;
+        height: 36px;
+        padding: 6px;
+    }
+
+    .sort-slider {
+        width: 82px;
+        min-width: 82px;
     }
 }
 
