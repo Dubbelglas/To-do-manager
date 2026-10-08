@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "To-Do Manager",
-  "short_name": "To-Do Manager",
+  "name": "#TODO",
+  "short_name": "#TODO",
   "description": "A simple task manager that works offline.",
   "start_url": "./",
   "scope": "./",
