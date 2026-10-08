@@ -1,4 +1,4 @@
-const CACHE_NAME = 'todo-manager-v1';
+const CACHE_NAME = 'todo-manager-pages-v2';
 const APP_FILES = [
     './',
     './index.html',
@@ -7,6 +7,8 @@ const APP_FILES = [
     './xlsx.full.min.js',
     './manifest.webmanifest',
     './icons/app-icon.svg',
+    './icons/app-icon-192.png',
+    './icons/app-icon-512.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -15,24 +17,33 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys().then((cacheNames) => Promise.all(
-            cacheNames.filter((cacheName) => cacheName !== CACHE_NAME).map((cacheName) => caches.delete(cacheName)),
-        )),
-    );
-    self.clients.claim();
+    event.waitUntil((async () => {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames
+            .filter((name) => (name.startsWith('todo-manager-pages-') || name === 'todo-manager-v1') && name !== CACHE_NAME)
+            .map((name) => caches.delete(name)));
+        await self.clients.claim();
+    })());
 });
 
 self.addEventListener('fetch', (event) => {
-    if (event.request.method !== 'GET' || new URL(event.request.url).origin !== self.location.origin) return;
+    const request = event.request;
+    if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
 
-    event.respondWith(
-        caches.match(event.request).then((cachedResponse) => cachedResponse || fetch(event.request).then((response) => {
-            if (response.ok) {
-                const responseCopy = response.clone();
-                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseCopy));
-            }
+    event.respondWith((async () => {
+        const cache = await caches.open(CACHE_NAME);
+        const cachedResponse = await cache.match(request);
+        if (cachedResponse) return cachedResponse;
+
+        try {
+            const response = await fetch(request);
+            if (response.ok) await cache.put(request, response.clone());
             return response;
-        })),
-    );
+        } catch (error) {
+            if (request.mode === 'navigate') {
+                return (await cache.match('./index.html')) || (await cache.match('./'));
+            }
+            throw error;
+        }
+    })());
 });

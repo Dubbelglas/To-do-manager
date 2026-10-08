@@ -1,44 +1,37 @@
 # To-Do Manager
 
-A small front-end to-do manager built with plain HTML, CSS, and JavaScript. It includes:
+A lightweight task manager built with HTML, CSS, and JavaScript. Tasks are stored in the browser with `localStorage`.
 
-- a task and priority for each item
-- optional details
-- optional deadlines
-- task completion tracking
-- a separate pane for tasks marked Periodic
-- double-click editing for task details
-- filtering by category
-- clear-completed action
-- import and export in `.xlsx` format
-- automatic browser persistence with localStorage whenever tasks are added or updated
+Features include task categories, priorities, details, deadlines, recurring tasks, completion tracking, sorting and filtering, task import/export in `.xlsx` format, and a shared pop-up form for adding and editing tasks.
+
+## GitHub Pages
+
+This is a static site with no build step. In the repository's **Settings → Pages**, select **Deploy from a branch**, then choose the branch containing this version and the repository root (`/`) as the folder. Once the deployment completes, visit:
+
+<https://dubbelglas.github.io/To-do-manager/>
+
+The app uses paths relative to its site directory, so the manifest, icons, and service worker work from a GitHub Pages project URL. The service worker caches the app shell for offline use and only removes caches belonging to this app.
+
+To install on Android, open the published HTTPS site in Chrome, open the menu, and select **Install app** or **Add to Home screen**. Tasks are stored on that device and do not sync between devices. A previously installed version may need to be removed and installed again after the first PWA deployment.
 
 ## Run locally
 
-Open `index.html` directly in a browser, or serve the folder with a simple local web server:
+From this folder, start a local server:
 
 ```bash
 python -m http.server 8000
 ```
 
-Then browse to http://localhost:8000.
+Then open <http://localhost:8000>. Browsers treat localhost as a secure context for service workers and PWA development.
 
-## Files
+## Project files
 
-- `index.html` — app structure
-- `styles.css` — layout and styling
-- `app.js` — task logic and persistence
-
-## Install on Android
-
-Publish this folder to a static host that serves it over HTTPS, then open the site in Chrome on Android. Use Chrome's menu and choose **Install app** or **Add to Home screen**. The app shell is cached for offline use after the first successful visit; tasks remain stored in that browser on that device.
-
-Opening `index.html` as a local file does not enable installation or offline caching. Service workers require HTTPS (or localhost during development).
-
-The Android install metadata is in `manifest.webmanifest`, the offline cache is managed by `service-worker.js`, and the app icon is `icons/app-icon.svg`.
-
-## Notes
-
-This project is intentionally lightweight and does not require a build step or external dependencies.
+- `index.html` — app page and relative asset links
+- `styles.css` — responsive layout and styling
+- `app.js` — task behavior and local storage
+- `manifest.webmanifest` — install name, display mode, start URL, and icons
+- `service-worker.js` — offline app shell cache
+- `icons/` — app icons
+- `xlsx.full.min.js` — bundled spreadsheet support
 
 Spreadsheet columns are category, priority (1 = low, 2 = medium, 3 = high, 4 = very high), task, details, deadline, and Periodic. Set Periodic to true, 1, yes, or y to place a task in the Periodiek pane. Imported rows with headers are supported; exported workbooks use the same column order.
