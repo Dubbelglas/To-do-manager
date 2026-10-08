@@ -84,13 +84,11 @@
 
         <section class="panel toolbar" aria-label="Todo controls">
             <div class="toolbar-actions">
-                <div class="sort-control sort-slider-control" data-mode="priority">
-                    <span id="sort-label">Sort</span>
-                    <div class="sort-slider">
-                        <button id="sort-option-priority" class="sort-slider-option" type="button" data-sort-option="priority" data-sort-value="0" aria-pressed="true">Priority</button>
-                        <input id="sort-tasks" name="sort-tasks" type="range" min="0" max="1" step="1" value="0"
-                            aria-labelledby="sort-label sort-option-priority sort-option-deadline" aria-valuetext="Priority" />
-                        <button id="sort-option-deadline" class="sort-slider-option" type="button" data-sort-option="deadline" data-sort-value="1" aria-pressed="false">Deadline</button>
+                <div class="sort-slider-control" data-mode="priority">
+                    <div id="sort-tasks" class="sort-slider" role="slider" tabindex="0" aria-label="Sort by priority or deadline"
+                        aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" aria-valuetext="Priority">
+                        <span id="sort-option-priority" data-sort-option="priority">Priority</span>
+                        <span id="sort-option-deadline" data-sort-option="deadline">Deadline</span>
                     </div>
                 </div>
                 <div class="toolbar-icon-actions" aria-label="Task actions">

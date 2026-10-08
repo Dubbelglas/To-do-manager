@@ -440,12 +440,10 @@ function render() {
         ? 'unchecked'
         : completedVisibleCount === toggleTasks.length ? 'checked' : 'mixed';
     if (sortSelect) {
-        sortSelect.value = state.sortMode === 'deadline' ? '1' : '0';
+        const sortValue = state.sortMode === 'deadline' ? '1' : '0';
+        sortSelect.setAttribute('aria-valuenow', sortValue);
         sortSelect.setAttribute('aria-valuetext', state.sortMode === 'deadline' ? 'Deadline' : 'Priority');
         sortSelect.closest('.sort-slider-control').dataset.mode = state.sortMode;
-        document.querySelectorAll('.sort-slider-option').forEach((option) => {
-            option.setAttribute('aria-pressed', String(option.dataset.sortValue === sortSelect.value));
-        });
     }
 
     taskCount.textContent = String(visibleTasks.length);
@@ -586,16 +584,41 @@ completeVisibleButton.addEventListener('click', () => {
     render();
 });
 
-sortSelect?.addEventListener('input', () => {
-    state.sortMode = sortSelect.value === '1' ? 'deadline' : 'priority';
+let sortPointerStart = null;
+sortSelect?.addEventListener('pointerdown', (event) => {
+    sortPointerStart = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
+    sortSelect.setPointerCapture(event.pointerId);
+});
+
+sortSelect?.addEventListener('pointerup', (event) => {
+    if (!sortPointerStart || sortPointerStart.pointerId !== event.pointerId) return;
+
+    const deltaX = event.clientX - sortPointerStart.x;
+    const deltaY = event.clientY - sortPointerStart.y;
+    sortPointerStart = null;
+    if (Math.abs(deltaX) > 12 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        state.sortMode = deltaX > 0 ? 'deadline' : 'priority';
+    } else if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) > 12) {
+        return;
+    } else {
+        state.sortMode = state.sortMode === 'priority' ? 'deadline' : 'priority';
+    }
     render();
 });
 
-document.querySelectorAll('.sort-slider-option').forEach((option) => {
-    option.addEventListener('click', () => {
-        sortSelect.value = option.dataset.sortValue;
-        sortSelect.dispatchEvent(new Event('input', { bubbles: true }));
-    });
+sortSelect?.addEventListener('pointercancel', () => { sortPointerStart = null; });
+sortSelect?.addEventListener('keydown', (event) => {
+    if (['ArrowRight', 'ArrowDown', 'End'].includes(event.key)) {
+        state.sortMode = 'deadline';
+    } else if (['ArrowLeft', 'ArrowUp', 'Home'].includes(event.key)) {
+        state.sortMode = 'priority';
+    } else if (event.key === 'Enter' || event.key === ' ') {
+        state.sortMode = state.sortMode === 'priority' ? 'deadline' : 'priority';
+    } else {
+        return;
+    }
+    event.preventDefault();
+    render();
 });
 
 categoryFilterSelect.addEventListener('change', () => {
