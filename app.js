@@ -234,8 +234,17 @@ function render() {
             .join('')
         : `<li class="empty-state">${emptyMessage}</li>`;
 
-    list.innerHTML = renderTasks(visibleTasks, 'No tasks in this view yet.');
-    periodicList.innerHTML = renderTasks(periodicTasks, 'No Periodic tasks yet.');
+    const hasRegularTasks = state.tasks.some((task) => !task.periodic);
+    const hasPeriodicTasks = state.tasks.some((task) => task.periodic);
+    const regularEmptyMessage = state.categoryFilter && hasRegularTasks
+        ? 'No tasks of the selected category.'
+        : 'No tasks in this view yet.';
+    const periodicEmptyMessage = state.categoryFilter && hasPeriodicTasks
+        ? 'No periodic tasks of the selected category.'
+        : 'No periodic tasks yet.';
+
+    list.innerHTML = renderTasks(visibleTasks, regularEmptyMessage);
+    periodicList.innerHTML = renderTasks(periodicTasks, periodicEmptyMessage);
 }
 
 form.addEventListener('submit', (event) => {
