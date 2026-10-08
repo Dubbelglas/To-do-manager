@@ -37,9 +37,24 @@ const categoryFilterSelect = document.querySelector('#category-filter');
 const taskDialog = document.querySelector('#task-dialog');
 const dialogTitle = document.querySelector('#task-dialog-title');
 const submitTaskButton = document.querySelector('#submit-task');
+let categoryValidationAttempted = false;
+
+function updateCategoryValidation() {
+    const categoryNeedsName = categorySelect.value === '__new__';
+    const categoryIsMissing = !categorySelect.value;
+    const newCategoryIsMissing = categoryNeedsName && !newCategoryInput.value.trim();
+    const invalid = categoryValidationAttempted && (categoryIsMissing || newCategoryIsMissing);
+
+    categorySelect.classList.toggle('category-invalid', invalid);
+    newCategoryInput.classList.toggle('category-invalid', invalid);
+    if (!categoryIsMissing && !newCategoryIsMissing) {
+        categoryValidationAttempted = false;
+    }
+}
 
 function openTaskDialog(task = null) {
     state.editingId = task?.id || null;
+    categoryValidationAttempted = false;
     dialogTitle.textContent = task ? 'Edit task' : 'Add task';
     submitTaskButton.textContent = task ? 'Save changes' : 'Add task';
     form.reset();
@@ -69,6 +84,7 @@ function closeTaskDialog() {
         taskDialog.removeAttribute('open');
     }
     state.editingId = null;
+    categoryValidationAttempted = false;
     form.reset();
     priorityInput.value = 'medium';
     refreshCategoryOptions();
@@ -407,6 +423,8 @@ form.addEventListener('submit', (event) => {
     if (selectedCategory === '__new__') {
         const newCategory = newCategoryInput.value.trim();
         if (!newCategory) {
+            categoryValidationAttempted = true;
+            updateCategoryValidation();
             newCategoryInput.focus();
             return;
         }
@@ -508,7 +526,17 @@ categoryFilterSelect.addEventListener('change', () => {
     render();
 });
 
-categorySelect.addEventListener('change', updateNewCategoryVisibility);
+categorySelect.addEventListener('change', () => {
+    updateNewCategoryVisibility();
+    updateCategoryValidation();
+});
+newCategoryInput.addEventListener('input', updateCategoryValidation);
+form.addEventListener('invalid', (event) => {
+    if (event.target === categorySelect || event.target === newCategoryInput) {
+        categoryValidationAttempted = true;
+        updateCategoryValidation();
+    }
+}, true);
 
 importButton.addEventListener('click', () => {
     importInput.click();

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'todo-manager-pages-v2';
+const CACHE_NAME = 'todo-manager-pages-v3';
 const APP_FILES = [
     './',
     './index.html',

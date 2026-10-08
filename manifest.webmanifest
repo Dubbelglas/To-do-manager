@@ -8,8 +8,8 @@
   "display": "standalone",
   "orientation": "any",
   "prefer_related_applications": false,
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#141512",
+  "theme_color": "#141512",
   "icons": [
     {
       "src": "icons/app-icon-192.png",
