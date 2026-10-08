@@ -672,7 +672,7 @@ importInput.addEventListener('change', async (event) => {
         importInput.value = '';
     }
 });
-exportButton.addEventListener('click', () => {
+exportButton.addEventListener('click', async () => {
     try {
         const worksheet = XLSX.utils.aoa_to_sheet([
             ['Category', 'Priority', 'Task', 'Details', 'Deadline', 'Periodic'],
@@ -687,9 +687,34 @@ exportButton.addEventListener('click', () => {
         ]);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Tasks');
-        XLSX.writeFile(workbook, 'tasks.xlsx');
-        showConfirmation('Spreadsheet exported successfully.');
+        const fileData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const file = new Blob([fileData], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+
+        if (typeof window.showSaveFilePicker === 'function') {
+            const fileHandle = await window.showSaveFilePicker({
+                suggestedName: 'tasks.xlsx',
+                types: [{
+                    description: 'Excel spreadsheet',
+                    accept: { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] },
+                }],
+            });
+            const writable = await fileHandle.createWritable();
+            await writable.write(file);
+            await writable.close();
+            showConfirmation('Spreadsheet exported successfully.');
+        } else {
+            const downloadUrl = URL.createObjectURL(file);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = downloadUrl;
+            downloadLink.download = 'tasks.xlsx';
+            downloadLink.click();
+            window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 60_000);
+            showConfirmation('Spreadsheet download started.');
+        }
     } catch (error) {
+        if (error.name === 'AbortError') return;
         console.error('Unable to export tasks:', error);
         alert('The spreadsheet could not be exported.');
     }
