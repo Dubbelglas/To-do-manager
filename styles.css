@@ -513,12 +513,22 @@ h1 {
 }
 
 .details-indicator {
+    padding: 0;
+    border: 0;
+    background: transparent;
     margin-right: auto;
     margin-left: 25px;
     color: var(--text-soft);
     font-size: 0.8rem;
     letter-spacing: 0.16em;
     line-height: 1;
+    cursor: pointer;
+}
+
+.details-indicator:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 3px;
 }
 
 .task-description {

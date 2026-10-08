@@ -160,7 +160,7 @@ function renderTaskView(task) {
             </div>
 
             <div class="meta">
-                ${task.description ? `<span class="details-indicator" aria-hidden="true" ${state.expandedTaskIds.has(task.id) ? 'hidden' : ''}>•••</span>` : ''}
+                ${task.description ? `<button type="button" class="details-indicator" data-action="toggle-details" aria-controls="task-details-${escapeHtml(task.id)}" aria-expanded="${state.expandedTaskIds.has(task.id)}" aria-label="Show details for ${escapeHtml(task.name)}" ${state.expandedTaskIds.has(task.id) ? 'hidden' : ''}>•••</button>` : ''}
                 <span class="badge category">${escapeHtml(task.category || 'General')}</span>
                 ${task.deadline ? `<span class="badge date">Due ${formatDate(task.deadline)}</span>` : ''}
                 <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
@@ -300,13 +300,18 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('click', 
     const { action, id } = button.dataset;
     if (action === 'toggle-details') {
         const expanded = button.getAttribute('aria-expanded') === 'true';
-        const details = button.closest('.todo-item')?.querySelector('.task-details');
-        const indicator = button.closest('.todo-item')?.querySelector('.details-indicator');
-        button.setAttribute('aria-expanded', String(!expanded));
+        const item = button.closest('.todo-item');
+        const details = item?.querySelector('.task-details');
+        const nameToggle = item?.querySelector('.task-name-toggle');
+        const indicator = item?.querySelector('.details-indicator');
+        const nextExpanded = !expanded;
+        for (const toggle of [nameToggle, indicator]) {
+            toggle?.setAttribute('aria-expanded', String(nextExpanded));
+        }
         if (details) details.hidden = expanded;
         if (indicator) indicator.hidden = !expanded;
-        if (expanded) state.expandedTaskIds.delete(button.closest('.todo-item').dataset.id);
-        else state.expandedTaskIds.add(button.closest('.todo-item').dataset.id);
+        if (expanded) state.expandedTaskIds.delete(item.dataset.id);
+        else state.expandedTaskIds.add(item.dataset.id);
         return;
     }
 

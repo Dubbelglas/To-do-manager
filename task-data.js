@@ -38,19 +38,43 @@
         };
     }
 
-    function loadTasks() {
+    function discardStoredTasks() {
         try {
-            const storedTasks = localStorage.getItem(STORAGE_KEY);
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(STORAGE_VERSION_KEY);
+        } catch (error) {
+            console.error('Unable to remove incompatible task data:', error);
+        }
+    }
+
+    function loadTasks() {
+        let storedTasks;
+        try {
+            storedTasks = localStorage.getItem(STORAGE_KEY);
             if (!storedTasks) return [];
 
             const parsed = JSON.parse(storedTasks);
-            if (Array.isArray(parsed)) return parsed.map(normalizeTask);
-            if (parsed && typeof parsed === 'object' && Array.isArray(parsed.tasks)) {
-                return parsed.tasks.map(normalizeTask);
+            const tasks = Array.isArray(parsed) ? parsed : parsed?.tasks;
+            const dataVersion = Number(parsed?.version || localStorage.getItem(STORAGE_VERSION_KEY) || 1);
+
+            // Read older arrays and task containers even when the current task list is empty.
+            // Validate the whole collection before normalizing so malformed legacy records
+            // cannot leave a partially migrated list behind.
+            if (!Array.isArray(tasks) || !Number.isInteger(dataVersion) || dataVersion > CURRENT_STORAGE_VERSION
+                || !tasks.every((task) => task && typeof task === 'object' && !Array.isArray(task)
+                    && typeof (task.name ?? task.text) === 'string' && (task.name ?? task.text).trim())) {
+                throw new Error('Stored tasks use an unsupported format.');
             }
-            return [];
+
+            const normalizedTasks = tasks.map(normalizeTask);
+            if (dataVersion < CURRENT_STORAGE_VERSION || !Array.isArray(parsed)) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: CURRENT_STORAGE_VERSION, tasks: normalizedTasks }));
+                localStorage.setItem(STORAGE_VERSION_KEY, String(CURRENT_STORAGE_VERSION));
+            }
+            return normalizedTasks;
         } catch (error) {
             console.error('Unable to load tasks:', error);
+            discardStoredTasks();
             return [];
         }
     }
