@@ -37,7 +37,18 @@ const categoryFilterSelect = document.querySelector('#category-filter');
 const taskDialog = document.querySelector('#task-dialog');
 const dialogTitle = document.querySelector('#task-dialog-title');
 const submitTaskButton = document.querySelector('#submit-task');
+const confirmationBanner = document.querySelector('#confirmation-banner');
 let categoryValidationAttempted = false;
+let confirmationTimer = null;
+
+function showConfirmation(message) {
+    confirmationBanner.textContent = message;
+    confirmationBanner.hidden = false;
+    window.clearTimeout(confirmationTimer);
+    confirmationTimer = window.setTimeout(() => {
+        confirmationBanner.hidden = true;
+    }, 3000);
+}
 
 function updateCategoryValidation() {
     const categoryNeedsName = categorySelect.value === '__new__';
@@ -446,6 +457,7 @@ form.addEventListener('submit', (event) => {
         selectedCategory = newCategory;
     }
 
+    const addingTask = !state.editingId;
     if (state.editingId) {
         const task = state.tasks.find((item) => item.id === state.editingId);
         if (task) {
@@ -459,9 +471,10 @@ form.addEventListener('submit', (event) => {
     } else {
         state.tasks.unshift(createTask(name, priorityInput.value, descriptionInput.value.trim(), deadlineInput.value, selectedCategory, periodicInput.checked));
     }
-    saveTasks();
+    const saved = saveTasks();
     closeTaskDialog();
     render();
+    if (addingTask && saved) showConfirmation('Task added successfully.');
 });
 
 document.querySelector('#add-task').addEventListener('click', () => openTaskDialog());
@@ -511,10 +524,14 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('click', 
 });
 
 clearCompletedButton.addEventListener('click', () => {
+    const removedCount = state.tasks.filter((task) => task.completed).length;
     state.tasks = state.tasks.filter((task) => !task.completed);
     state.editingId = null;
-    saveTasks();
+    const saved = saveTasks();
     render();
+    if (removedCount > 0 && saved) {
+        showConfirmation(`${removedCount} completed task${removedCount === 1 ? '' : 's'} deleted.`);
+    }
 });
 
 completeVisibleButton.addEventListener('click', () => {
@@ -607,8 +624,9 @@ importInput.addEventListener('change', async (event) => {
         }
 
         state.tasks = [...importedTasks, ...state.tasks];
-        saveTasks();
+        const saved = saveTasks();
         render();
+        if (saved) showConfirmation('Spreadsheet imported successfully.');
         importInput.value = '';
     } catch (error) {
         console.error('Unable to import tasks:', error);
@@ -618,20 +636,26 @@ importInput.addEventListener('change', async (event) => {
     }
 });
 exportButton.addEventListener('click', () => {
-    const worksheet = XLSX.utils.aoa_to_sheet([
-        ['Category', 'Priority', 'Task', 'Details', 'Deadline', 'Periodic'],
-        ...state.tasks.map((task) => [
-            task.category || 'General',
-            getPriorityNumber(task.priority),
-            task.name,
-            task.description,
-            task.deadline,
-            task.periodic,
-        ]),
-    ]);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Tasks');
-    XLSX.writeFile(workbook, 'tasks.xlsx');
+    try {
+        const worksheet = XLSX.utils.aoa_to_sheet([
+            ['Category', 'Priority', 'Task', 'Details', 'Deadline', 'Periodic'],
+            ...state.tasks.map((task) => [
+                task.category || 'General',
+                getPriorityNumber(task.priority),
+                task.name,
+                task.description,
+                task.deadline,
+                task.periodic,
+            ]),
+        ]);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Tasks');
+        XLSX.writeFile(workbook, 'tasks.xlsx');
+        showConfirmation('Spreadsheet exported successfully.');
+    } catch (error) {
+        console.error('Unable to export tasks:', error);
+        alert('The spreadsheet could not be exported.');
+    }
 });
 
 refreshCategoryOptions();
