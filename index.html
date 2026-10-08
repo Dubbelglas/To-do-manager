@@ -86,19 +86,15 @@
             <p id="task-summary">0 tasks left</p>
 
             <div class="toolbar-actions">
-                <label class="sort-control" for="category-filter">
-                    <span>Category</span>
-                    <select id="category-filter" name="category-filter">
-                        <option value="">--All--</option>
-                    </select>
-                </label>
-                <label class="sort-control" for="sort-tasks">
-                    <span>Sort</span>
-                    <select id="sort-tasks" name="sort-tasks">
-                        <option value="priority">Priority</option>
-                        <option value="deadline">Deadline</option>
-                    </select>
-                </label>
+                <div class="sort-control sort-slider-control" data-mode="priority">
+                    <span id="sort-label">Sort</span>
+                    <div class="sort-slider">
+                        <button id="sort-option-priority" class="sort-slider-option" type="button" data-sort-option="priority" data-sort-value="0" aria-pressed="true">Priority</button>
+                        <input id="sort-tasks" name="sort-tasks" type="range" min="0" max="1" step="1" value="0"
+                            aria-labelledby="sort-label sort-option-priority sort-option-deadline" aria-valuetext="Priority" />
+                        <button id="sort-option-deadline" class="sort-slider-option" type="button" data-sort-option="deadline" data-sort-value="1" aria-pressed="false">Deadline</button>
+                    </div>
+                </div>
                 <div class="toolbar-icon-actions" aria-label="Task actions">
                     <button id="import-tasks" type="button" class="secondary-btn icon-btn" aria-label="Import spreadsheet" title="Import spreadsheet">
                         <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -131,11 +127,19 @@
 
         <details class="panel task-pane" open>
             <summary class="task-pane-heading">Tasks</summary>
+            <div class="task-pane-controls">
+                <label class="sort-control" for="category-filter">
+                    <span>Category</span>
+                    <select id="category-filter" name="category-filter">
+                        <option value="">--All--</option>
+                    </select>
+                </label>
+            </div>
             <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
         </details>
 
         <details class="panel task-pane" open>
-            <summary class="task-pane-heading">Periodiek</summary>
+            <summary class="task-pane-heading">Periodic</summary>
             <ul id="periodic-todo-list" class="todo-list" aria-live="polite"></ul>
         </details>
     </main>

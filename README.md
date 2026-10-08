@@ -34,4 +34,4 @@ Then open <http://localhost:8000>. Browsers treat localhost as a secure context 
 - `icons/` — app icons
 - `xlsx.full.min.js` — bundled spreadsheet support
 
-Spreadsheet columns are category, priority (1 = low, 2 = medium, 3 = high, 4 = very high), task, details, deadline, and Periodic. Set Periodic to true, 1, yes, or y to place a task in the Periodiek pane. Imported rows with headers are supported; exported workbooks use the same column order.
+Spreadsheet columns are category, priority (1 = low, 2 = medium, 3 = high, 4 = very high), task, details, deadline, and Periodic. Set Periodic to true, 1, yes, or y to place a task in the Periodic pane. Imported rows with headers are supported; exported workbooks use the same column order.

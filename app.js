@@ -385,12 +385,12 @@ function renderTaskView(task) {
                     <span class="badge category">${escapeHtml(task.category || 'General')}</span>
                     ${task.deadline ? `<span class="badge date">Due ${formatDate(task.deadline)}</span>` : ''}
                     <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
+                    <button type="button" class="secondary-btn icon-btn task-edit-btn" data-action="edit" data-id="${task.id}" aria-label="Edit ${escapeHtml(task.name)}" title="Edit task">
+                        <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m15 5 4 4M4 20l4-.8L19.2 8a2.1 2.1 0 0 0-3-3L5 16.2 4 20Z" />
+                        </svg>
+                    </button>
                 </div>
-                <button type="button" class="secondary-btn icon-btn task-edit-btn" data-action="edit" data-id="${task.id}" aria-label="Edit ${escapeHtml(task.name)}" title="Edit task">
-                    <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="m15 5 4 4M4 20l4-.8L19.2 8a2.1 2.1 0 0 0-3-3L5 16.2 4 20Z" />
-                    </svg>
-                </button>
             </div>
 
             ${task.description ? `<p class="task-description">${escapeHtml(task.description)}</p>` : ''}
@@ -412,7 +412,12 @@ function render() {
     const remaining = state.tasks.filter((task) => !task.completed).length;
 
     if (sortSelect) {
-        sortSelect.value = state.sortMode;
+        sortSelect.value = state.sortMode === 'deadline' ? '1' : '0';
+        sortSelect.setAttribute('aria-valuetext', state.sortMode === 'deadline' ? 'Deadline' : 'Priority');
+        sortSelect.closest('.sort-slider-control').dataset.mode = state.sortMode;
+        document.querySelectorAll('.sort-slider-option').forEach((option) => {
+            option.setAttribute('aria-pressed', String(option.dataset.sortValue === sortSelect.value));
+        });
     }
 
     summary.textContent = `${remaining} task${remaining === 1 ? '' : 's'} left`;
@@ -433,7 +438,7 @@ function render() {
         : `<li class="empty-state">${emptyMessage}</li>`;
 
     list.innerHTML = renderTasks(visibleTasks, 'No tasks in this view yet.');
-    periodicList.innerHTML = renderTasks(periodicTasks, 'No Periodiek tasks yet.');
+    periodicList.innerHTML = renderTasks(periodicTasks, 'No Periodic tasks yet.');
 }
 
 form.addEventListener('submit', (event) => {
@@ -548,9 +553,16 @@ completeVisibleButton.addEventListener('click', () => {
     render();
 });
 
-sortSelect?.addEventListener('change', () => {
-    state.sortMode = sortSelect.value;
+sortSelect?.addEventListener('input', () => {
+    state.sortMode = sortSelect.value === '1' ? 'deadline' : 'priority';
     render();
+});
+
+document.querySelectorAll('.sort-slider-option').forEach((option) => {
+    option.addEventListener('click', () => {
+        sortSelect.value = option.dataset.sortValue;
+        sortSelect.dispatchEvent(new Event('input', { bubbles: true }));
+    });
 });
 
 categoryFilterSelect.addEventListener('change', () => {
