@@ -160,6 +160,7 @@ function renderTaskView(task) {
             </div>
 
             <div class="meta">
+                ${task.description ? `<span class="details-indicator" aria-hidden="true" ${state.expandedTaskIds.has(task.id) ? 'hidden' : ''}>•••</span>` : ''}
                 <span class="badge category">${escapeHtml(task.category || 'General')}</span>
                 ${task.deadline ? `<span class="badge date">Due ${formatDate(task.deadline)}</span>` : ''}
                 <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
@@ -300,8 +301,10 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('click', 
     if (action === 'toggle-details') {
         const expanded = button.getAttribute('aria-expanded') === 'true';
         const details = button.closest('.todo-item')?.querySelector('.task-details');
+        const indicator = button.closest('.todo-item')?.querySelector('.details-indicator');
         button.setAttribute('aria-expanded', String(!expanded));
         if (details) details.hidden = expanded;
+        if (indicator) indicator.hidden = !expanded;
         if (expanded) state.expandedTaskIds.delete(button.closest('.todo-item').dataset.id);
         else state.expandedTaskIds.add(button.closest('.todo-item').dataset.id);
         return;

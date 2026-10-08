@@ -477,7 +477,7 @@ h1 {
 
 .todo-text {
     word-break: break-word;
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .task-name-toggle {
@@ -510,6 +510,15 @@ h1 {
     gap: 8px;
     flex-wrap: wrap;
     justify-content: flex-end;
+}
+
+.details-indicator {
+    margin-right: auto;
+    margin-left: 30px;
+    color: var(--text-soft);
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    line-height: 1;
 }
 
 .task-description {

@@ -16,75 +16,79 @@
 
 <body>
     <main class="app-shell">
-        <div id="confirmation-banner" class="confirmation-banner" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+        <div id="confirmation-banner" class="confirmation-banner" role="status" aria-live="polite" aria-atomic="true"
+            hidden></div>
         <header class="topbar">
             <div>
                 <h1>#TODO</h1>
             </div>
-            <button id="add-task" type="button" class="primary-btn add-task-btn" aria-label="Add task" title="Add task">+</button>
+            <button id="add-task" type="button" class="primary-btn add-task-btn" aria-label="Add task"
+                title="Add task">+</button>
         </header>
 
         <dialog id="task-dialog" class="task-dialog" aria-labelledby="task-dialog-title">
             <section class="panel dialog-panel">
                 <div class="dialog-heading">
                     <h2 id="task-dialog-title">Add task</h2>
-                    <button id="close-task-dialog" type="button" class="secondary-btn close-dialog" aria-label="Close">×</button>
+                    <button id="close-task-dialog" type="button" class="secondary-btn close-dialog"
+                        aria-label="Close">×</button>
                 </div>
-            <form id="todo-form" class="todo-form">
-                <label class="field field-wide" for="todo-name">
-                    <span>Task</span>
-                    <input id="todo-name" name="name" type="text" maxlength="160" placeholder="What needs to be done?"
-                        required />
-                </label>
-
-                <div class="category-field-stack">
-                    <label class="field" for="todo-category">
-                        <span>Category</span>
-                        <select id="todo-category" name="category"></select>
+                <form id="todo-form" class="todo-form">
+                    <label class="field field-wide" for="todo-name">
+                        <span>Task</span>
+                        <input id="todo-name" name="name" type="text" maxlength="160"
+                            placeholder="What needs to be done?" required />
                     </label>
 
-                    <label id="todo-new-category-wrap" class="field hidden" for="todo-new-category">
-                        <span>New category</span>
-                        <input id="todo-new-category" name="newCategory" type="text" maxlength="60"
-                            placeholder="Type a new category name" />
+                    <div class="category-field-stack">
+                        <label class="field" for="todo-category">
+                            <span>Category</span>
+                            <select id="todo-category" name="category"></select>
+                        </label>
+
+                        <label id="todo-new-category-wrap" class="field hidden" for="todo-new-category">
+                            <span>New category</span>
+                            <input id="todo-new-category" name="newCategory" type="text" maxlength="60"
+                                placeholder="Type a new category name" />
+                        </label>
+                    </div>
+
+                    <label class="field" for="todo-priority">
+                        <span>Priority</span>
+                        <select id="todo-priority" name="priority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="very-high">Very high</option>
+                        </select>
                     </label>
-                </div>
 
-                <label class="field" for="todo-priority">
-                    <span>Priority</span>
-                    <select id="todo-priority" name="priority">
-                        <option value="low">Low</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="high">High</option>
-                        <option value="very-high">Very high</option>
-                    </select>
-                </label>
+                    <label class="field" for="todo-deadline">
+                        <span>Deadline</span>
+                        <input id="todo-deadline" name="deadline" type="date" />
+                    </label>
 
-                <label class="field" for="todo-deadline">
-                    <span>Deadline</span>
-                    <input id="todo-deadline" name="deadline" type="date" />
-                </label>
+                    <label class="field periodic-toggle" for="todo-periodic">
+                        <span>Periodic</span>
+                        <input id="todo-periodic" name="periodic" type="checkbox" />
+                    </label>
 
-                <label class="field periodic-toggle" for="todo-periodic">
-                    <span>Periodic</span>
-                    <input id="todo-periodic" name="periodic" type="checkbox" />
-                </label>
+                    <label class="field field-full" for="todo-description">
+                        <span>Details</span>
+                        <textarea id="todo-description" name="description" rows="3" maxlength="500"
+                            placeholder="Add more detail if needed"></textarea>
+                    </label>
 
-                <label class="field field-full" for="todo-description">
-                    <span>Details</span>
-                    <textarea id="todo-description" name="description" rows="3" maxlength="500"
-                        placeholder="Add more detail if needed"></textarea>
-                </label>
-
-                <div class="form-actions field-full">
-                    <button type="button" id="cancel-task" class="secondary-btn">Cancel</button>
-                    <button type="submit" id="submit-task" class="primary-btn">Add task</button>
-                </div>
-            </form>
+                    <div class="form-actions field-full">
+                        <button type="button" id="cancel-task" class="secondary-btn">Cancel</button>
+                        <button type="submit" id="submit-task" class="primary-btn">Add task</button>
+                    </div>
+                </form>
             </section>
         </dialog>
 
-        <dialog id="delete-confirm-dialog" class="task-dialog delete-confirm-dialog" aria-labelledby="delete-confirm-title" aria-describedby="delete-confirm-message">
+        <dialog id="delete-confirm-dialog" class="task-dialog delete-confirm-dialog"
+            aria-labelledby="delete-confirm-title" aria-describedby="delete-confirm-message">
             <section class="panel dialog-panel">
                 <div class="dialog-heading">
                     <h2 id="delete-confirm-title">Delete completed tasks?</h2>
@@ -102,8 +106,9 @@
         <section class="panel toolbar" aria-label="Todo controls">
             <div class="toolbar-actions">
                 <div class="sort-slider-control" data-mode="priority">
-                    <div id="sort-tasks" class="sort-slider" role="slider" tabindex="0" aria-label="Sort by priority or deadline"
-                        aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" aria-valuetext="Priority">
+                    <div id="sort-tasks" class="sort-slider" role="slider" tabindex="0"
+                        aria-label="Sort by priority or deadline" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0"
+                        aria-valuetext="Priority">
                         <span id="sort-option-priority" data-sort-option="priority" aria-hidden="true">
                             <svg class="sort-option-icon" viewBox="0 0 24 24">
                                 <circle cx="12" cy="12" r="9" />
@@ -114,33 +119,39 @@
                         <span id="sort-option-deadline" data-sort-option="deadline" aria-hidden="true">
                             <svg class="sort-option-icon" viewBox="0 0 24 24">
                                 <rect x="4" y="5.5" width="16" height="15" rx="2" />
-                                <path d="M8 3.5v4M16 3.5v4M4 10h16M8 13.5h.01M12 13.5h.01M16 13.5h.01M8 17h.01M12 17h.01" />
+                                <path
+                                    d="M8 3.5v4M16 3.5v4M4 10h16M8 13.5h.01M12 13.5h.01M16 13.5h.01M8 17h.01M12 17h.01" />
                             </svg>
                         </span>
                     </div>
                 </div>
                 <div class="toolbar-icon-actions" aria-label="Task actions">
-                    <button id="import-tasks" type="button" class="secondary-btn icon-btn" aria-label="Import spreadsheet" title="Import spreadsheet">
-                        <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M3.5 3.5h10l3 3V20a1 1 0 0 1-1 1h-12a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" />
-                            <path d="M13.5 3.5v4h4M6 10h7M6 13h7M6 16h7M19 10v8m-3-3 3 3 3-3" />
-                        </svg>
-                    </button>
-                    <input id="import-file" type="file" accept=".xlsx,.xls,.csv" hidden />
-                    <button id="export-tasks" type="button" class="secondary-btn icon-btn" aria-label="Export spreadsheet" title="Export spreadsheet">
-                        <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M3.5 3.5h10l3 3V20a1 1 0 0 1-1 1h-12a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" />
-                            <path d="M13.5 3.5v4h4M6 10h7M6 13h7M6 16h7M19 18v-8m-3 3 3-3 3 3" />
-                        </svg>
-                    </button>
-                    <button id="complete-visible" type="button" class="secondary-btn icon-btn" aria-label="Toggle completion for visible tasks" title="Toggle completion for visible tasks" data-state="unchecked">
+                    <button id="complete-visible" type="button" class="secondary-btn icon-btn"
+                        aria-label="Toggle completion for visible tasks" title="Toggle completion for visible tasks"
+                        data-state="unchecked">
                         <svg class="icon-svg checkbox-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <rect x="3.5" y="3.5" width="17" height="17" rx="3" />
                             <path class="checkbox-mark" d="m7.5 12.5 3 3 6.5-7" />
                             <path class="checkbox-mixed" d="M8 12h8" />
                         </svg>
                     </button>
-                    <button id="clear-completed" type="button" class="secondary-btn icon-btn" aria-label="Clear completed tasks" title="Clear completed tasks">
+                    <button id="import-tasks" type="button" class="secondary-btn icon-btn"
+                        aria-label="Import spreadsheet" title="Import spreadsheet">
+                        <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3.5 3.5h10l3 3V20a1 1 0 0 1-1 1h-12a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" />
+                            <path d="M13.5 3.5v4h4M6 10h7M6 13h7M6 16h7M19 10v8m-3-3 3 3 3-3" />
+                        </svg>
+                    </button>
+                    <input id="import-file" type="file" accept=".xlsx,.xls,.csv" hidden />
+                    <button id="export-tasks" type="button" class="secondary-btn icon-btn"
+                        aria-label="Export spreadsheet" title="Export spreadsheet">
+                        <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3.5 3.5h10l3 3V20a1 1 0 0 1-1 1h-12a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" />
+                            <path d="M13.5 3.5v4h4M6 10h7M6 13h7M6 16h7M19 18v-8m-3 3 3-3 3 3" />
+                        </svg>
+                    </button>
+                    <button id="clear-completed" type="button" class="secondary-btn icon-btn"
+                        aria-label="Clear completed tasks" title="Clear completed tasks">
                         <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 4v5m4-5v5" />
                         </svg>
@@ -168,7 +179,8 @@
         <details class="panel task-pane periodic-pane" open>
             <summary class="task-pane-heading">
                 <span>Periodic</span>
-                <span id="periodic-task-count" class="task-count" aria-label="0 periodic tasks" aria-live="polite">0</span>
+                <span id="periodic-task-count" class="task-count" aria-label="0 periodic tasks"
+                    aria-live="polite">0</span>
             </summary>
             <ul id="periodic-todo-list" class="todo-list" aria-live="polite"></ul>
         </details>
