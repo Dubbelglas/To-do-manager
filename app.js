@@ -22,6 +22,8 @@ const deadlineInput = document.querySelector('#todo-deadline');
 const periodicInput = document.querySelector('#todo-periodic');
 const list = document.querySelector('#todo-list');
 const periodicList = document.querySelector('#periodic-todo-list');
+const tasksPane = document.querySelector('.tasks-pane');
+const periodicPane = document.querySelector('.periodic-pane');
 const taskCount = document.querySelector('#task-count');
 const periodicTaskCount = document.querySelector('#periodic-task-count');
 const clearCompletedButton = document.querySelector('#clear-completed');
@@ -162,6 +164,13 @@ function updateNewCategoryVisibility() {
     newCategoryInput.required = showNewCategory;
 }
 
+function getDisplayedTasks() {
+    return [
+        ...(tasksPane.open ? getVisibleTasks() : []),
+        ...(periodicPane.open ? getVisiblePeriodicTasks() : []),
+    ];
+}
+
 function renderTaskView(task) {
     return `
         <div class="task-card">
@@ -202,7 +211,7 @@ function render() {
     refreshCategoryFilterOptions();
     const visibleTasks = getVisibleTasks();
     const periodicTasks = getVisiblePeriodicTasks();
-    const toggleTasks = [...visibleTasks, ...periodicTasks];
+    const toggleTasks = getDisplayedTasks();
     const completedVisibleCount = toggleTasks.filter((task) => task.completed).length;
     const toggleState = toggleTasks.length === 0 || completedVisibleCount === 0
         ? 'unchecked'
@@ -392,18 +401,22 @@ confirmDeleteButton.addEventListener('click', () => {
 });
 
 completeVisibleButton.addEventListener('click', () => {
-    const visibleTasks = [...getVisibleTasks(), ...getVisiblePeriodicTasks()];
-    if (!visibleTasks.length) {
+    const displayedTasks = getDisplayedTasks();
+    if (!displayedTasks.length) {
         return;
     }
 
-    const markDone = visibleTasks.some((task) => !task.completed);
-    visibleTasks.forEach((task) => {
+    const markDone = displayedTasks.some((task) => !task.completed);
+    displayedTasks.forEach((task) => {
         task.completed = markDone;
     });
     saveTasks();
     render();
 });
+
+for (const pane of [tasksPane, periodicPane]) {
+    pane.addEventListener('toggle', render);
+}
 
 let sortPointerStart = null;
 sortSelect?.addEventListener('pointerdown', (event) => {
