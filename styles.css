@@ -583,6 +583,14 @@ h1 {
     overflow: hidden;
 }
 
+.tasks-pane {
+    border-color: rgba(250, 204, 21, 0.82);
+}
+
+.periodic-pane {
+    border-color: rgba(132, 204, 22, 0.82);
+}
+
 .task-pane-heading {
     display: flex;
     align-items: center;
