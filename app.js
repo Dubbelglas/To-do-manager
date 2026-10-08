@@ -25,6 +25,10 @@ const periodicList = document.querySelector('#periodic-todo-list');
 const taskCount = document.querySelector('#task-count');
 const periodicTaskCount = document.querySelector('#periodic-task-count');
 const clearCompletedButton = document.querySelector('#clear-completed');
+const deleteConfirmDialog = document.querySelector('#delete-confirm-dialog');
+const deleteConfirmMessage = document.querySelector('#delete-confirm-message');
+const cancelDeleteButton = document.querySelector('#cancel-delete');
+const confirmDeleteButton = document.querySelector('#confirm-delete');
 const completeVisibleButton = document.querySelector('#complete-visible');
 const importButton = document.querySelector('#import-tasks');
 const importInput = document.querySelector('#import-file');
@@ -309,15 +313,44 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('click', 
     }
 });
 
+function closeDeleteConfirmDialog() {
+    if (typeof deleteConfirmDialog.close === 'function') {
+        deleteConfirmDialog.close();
+    } else {
+        deleteConfirmDialog.removeAttribute('open');
+    }
+}
+
 clearCompletedButton.addEventListener('click', () => {
+    const completedCount = state.tasks.filter((task) => task.completed).length;
+    if (!completedCount) return;
+
+    deleteConfirmMessage.textContent = `Delete ${completedCount} completed task${completedCount === 1 ? '' : 's'}? This action cannot be undone.`;
+    if (typeof deleteConfirmDialog.showModal === 'function') {
+        deleteConfirmDialog.showModal();
+    } else {
+        deleteConfirmDialog.setAttribute('open', '');
+    }
+});
+
+cancelDeleteButton.addEventListener('click', closeDeleteConfirmDialog);
+
+confirmDeleteButton.addEventListener('click', () => {
     const removedCount = state.tasks.filter((task) => task.completed).length;
+    if (!removedCount) {
+        closeDeleteConfirmDialog();
+        return;
+    }
+
+    for (const task of state.tasks) {
+        if (task.completed) state.expandedTaskIds.delete(task.id);
+    }
     state.tasks = state.tasks.filter((task) => !task.completed);
     state.editingId = null;
     const saved = saveTasks();
+    closeDeleteConfirmDialog();
     render();
-    if (removedCount > 0 && saved) {
-        showConfirmation(`${removedCount} completed task${removedCount === 1 ? '' : 's'} deleted.`);
-    }
+    if (saved) showConfirmation(`${removedCount} completed task${removedCount === 1 ? '' : 's'} deleted.`);
 });
 
 completeVisibleButton.addEventListener('click', () => {

@@ -84,6 +84,21 @@
             </section>
         </dialog>
 
+        <dialog id="delete-confirm-dialog" class="task-dialog delete-confirm-dialog" aria-labelledby="delete-confirm-title" aria-describedby="delete-confirm-message">
+            <section class="panel dialog-panel">
+                <div class="dialog-heading">
+                    <h2 id="delete-confirm-title">Delete completed tasks?</h2>
+                </div>
+                <div class="delete-confirm-content">
+                    <p id="delete-confirm-message">This action cannot be undone.</p>
+                    <div class="delete-confirm-actions">
+                        <button id="cancel-delete" type="button" class="secondary-btn">Cancel</button>
+                        <button id="confirm-delete" type="button" class="danger-btn">Delete tasks</button>
+                    </div>
+                </div>
+            </section>
+        </dialog>
+
         <section class="panel toolbar" aria-label="Todo controls">
             <div class="toolbar-actions">
                 <div class="sort-slider-control" data-mode="priority">
