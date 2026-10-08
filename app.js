@@ -32,6 +32,45 @@ const importInput = document.querySelector('#import-file');
 const exportButton = document.querySelector('#export-tasks');
 const sortSelect = document.querySelector('#sort-tasks');
 const categoryFilterSelect = document.querySelector('#category-filter');
+const taskDialog = document.querySelector('#task-dialog');
+const dialogTitle = document.querySelector('#task-dialog-title');
+const submitTaskButton = document.querySelector('#submit-task');
+
+function openTaskDialog(task = null) {
+    state.editingId = task?.id || null;
+    dialogTitle.textContent = task ? 'Edit task' : 'Add task';
+    submitTaskButton.textContent = task ? 'Save changes' : 'Add task';
+    form.reset();
+    priorityInput.value = task?.priority || 'medium';
+    nameInput.value = task?.name || '';
+    descriptionInput.value = task?.description || '';
+    deadlineInput.value = task?.deadline || '';
+    periodicInput.checked = task?.periodic || false;
+    refreshCategoryOptions(task?.category || '');
+    if (task && !getCategories().includes(task.category)) {
+        categorySelect.value = '__new__';
+        newCategoryInput.value = task.category;
+    }
+    updateNewCategoryVisibility();
+    if (typeof taskDialog.showModal === 'function') {
+        taskDialog.showModal();
+    } else {
+        taskDialog.setAttribute('open', '');
+    }
+    nameInput.focus();
+}
+
+function closeTaskDialog() {
+    if (typeof taskDialog.close === 'function') {
+        taskDialog.close();
+    } else {
+        taskDialog.removeAttribute('open');
+    }
+    state.editingId = null;
+    form.reset();
+    priorityInput.value = 'medium';
+    refreshCategoryOptions();
+}
 
 const PRIORITY_ORDER = {
     low: 1,
@@ -284,55 +323,6 @@ function getCategorySelectMarkup(taskId, selectedValue) {
     `;
 }
 
-function renderTaskEditor(task) {
-    const selectedCategory = task.category || 'General';
-    return `
-        <div class="task-editor">
-            <div class="editor-grid">
-                <label class="field field-wide">
-                    <span>Task</span>
-                    <input type="text" data-id="${task.id}" data-field="name" value="${escapeHtml(task.name)}" required />
-                </label>
-
-                <label class="field">
-                    <span>Category</span>
-                    ${getCategorySelectMarkup(task.id, selectedCategory)}
-                </label>
-
-                <label class="field">
-                    <span>Priority</span>
-                    <select data-id="${task.id}" data-field="priority">
-                        <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low</option>
-                        <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium</option>
-                        <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option>
-                        <option value="very-high" ${task.priority === 'very-high' ? 'selected' : ''}>Very high</option>
-                    </select>
-                </label>
-
-                <label class="field">
-                    <span>Deadline</span>
-                    <input type="date" data-id="${task.id}" data-field="deadline" value="${task.deadline || ''}" />
-                </label>
-
-                <label class="field periodic-toggle">
-                    <span>Periodic</span>
-                    <input type="checkbox" data-id="${task.id}" data-field="periodic" ${task.periodic ? 'checked' : ''} />
-                </label>
-
-                <label class="field field-full">
-                    <span>Details</span>
-                    <textarea rows="3" data-id="${task.id}" data-field="description">${escapeHtml(task.description)}</textarea>
-                </label>
-            </div>
-
-            <div class="task-actions">
-                <button type="button" class="primary-btn small" data-action="save-edit" data-id="${task.id}">Save</button>
-                <button type="button" class="secondary-btn small" data-action="cancel-edit" data-id="${task.id}">Cancel</button>
-            </div>
-        </div>
-    `;
-}
-
 function renderTaskView(task) {
     return `
         <div class="task-card">
@@ -347,6 +337,7 @@ function renderTaskView(task) {
                     ${task.deadline ? `<span class="badge date">Due ${formatDate(task.deadline)}</span>` : ''}
                     <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
                 </div>
+                <button type="button" class="secondary-btn small" data-action="edit" data-id="${task.id}" aria-label="Edit ${escapeHtml(task.name)}">Edit</button>
             </div>
 
             ${task.description ? `<p class="task-description">${escapeHtml(task.description)}</p>` : ''}
@@ -371,7 +362,7 @@ function render() {
     const renderTasks = (tasks, emptyMessage) => tasks.length
         ? tasks.map((task) => `
             <li class="todo-item ${task.completed ? 'is-done' : ''}" data-id="${task.id}">
-                ${state.editingId === task.id ? renderTaskEditor(task) : renderTaskView(task)}
+                ${renderTaskView(task)}
             </li>
         `)
         .join('')
@@ -400,14 +391,28 @@ form.addEventListener('submit', (event) => {
         selectedCategory = newCategory;
     }
 
-    state.tasks.unshift(createTask(name, priorityInput.value, descriptionInput.value.trim(), deadlineInput.value, selectedCategory, periodicInput.checked));
-    form.reset();
-    priorityInput.value = 'medium';
-    refreshCategoryOptions();
-    nameInput.focus();
+    if (state.editingId) {
+        const task = state.tasks.find((item) => item.id === state.editingId);
+        if (task) {
+            task.name = name;
+            task.category = selectedCategory;
+            task.priority = normalizePriority(priorityInput.value);
+            task.description = descriptionInput.value.trim();
+            task.deadline = deadlineInput.value;
+            task.periodic = periodicInput.checked;
+        }
+    } else {
+        state.tasks.unshift(createTask(name, priorityInput.value, descriptionInput.value.trim(), deadlineInput.value, selectedCategory, periodicInput.checked));
+    }
     saveTasks();
+    closeTaskDialog();
     render();
 });
+
+document.querySelector('#add-task').addEventListener('click', () => openTaskDialog());
+document.querySelector('#cancel-task').addEventListener('click', closeTaskDialog);
+document.querySelector('#close-task-dialog').addEventListener('click', closeTaskDialog);
+taskDialog.addEventListener('close', () => { state.editingId = null; });
 
 for (const taskList of [list, periodicList]) taskList.addEventListener('change', (event) => {
     const checkbox = event.target.closest('input[type="checkbox"][data-action="toggle"]');
@@ -431,12 +436,10 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('dblclick
     }
 
     const item = event.target.closest('.todo-item');
-    if (!item || state.editingId) {
+    if (!item) {
         return;
     }
-
-    state.editingId = item.dataset.id;
-    render();
+    openTaskDialog(state.tasks.find((task) => task.id === item.dataset.id));
 });
 
 for (const taskList of [list, periodicList]) taskList.addEventListener('click', (event) => {
@@ -446,44 +449,9 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('click', 
     }
 
     const { action, id } = button.dataset;
-    const taskIndex = state.tasks.findIndex((task) => task.id === id);
-    if (taskIndex === -1) {
-        return;
-    }
-
-    if (action === 'cancel-edit') {
-        state.editingId = null;
-        render();
-        return;
-    }
-
-    if (action === 'save-edit') {
-        const task = state.tasks[taskIndex];
-        const nameField = taskList.querySelector(`[data-id="${id}"][data-field="name"]`);
-        const categoryField = taskList.querySelector(`[data-id="${id}"][data-field="category"]`);
-        const priorityField = taskList.querySelector(`[data-id="${id}"][data-field="priority"]`);
-        const descriptionField = taskList.querySelector(`[data-id="${id}"][data-field="description"]`);
-        const deadlineField = taskList.querySelector(`[data-id="${id}"][data-field="deadline"]`);
-        const periodicField = taskList.querySelector(`[data-id="${id}"][data-field="periodic"]`);
-        const updatedName = nameField ? nameField.value.trim() : task.name;
-
-        if (!updatedName) {
-            if (nameField) {
-                nameField.focus();
-            }
-            return;
-        }
-
-        task.name = updatedName;
-        task.category = categoryField && categoryField.value !== '__new__' ? categoryField.value.trim() : task.category;
-        task.priority = normalizePriority(priorityField?.value || task.priority);
-        task.description = descriptionField ? descriptionField.value.trim() : task.description;
-        task.deadline = deadlineField ? deadlineField.value : task.deadline;
-        task.periodic = periodicField ? periodicField.checked : task.periodic;
-
-        state.editingId = null;
-        saveTasks();
-        render();
+    if (action === 'edit') {
+        const task = state.tasks.find((item) => item.id === id);
+        if (task) openTaskDialog(task);
     }
 });
 

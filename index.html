@@ -5,6 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>To-Do Manager</title>
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/app-icon.svg" />
     <link rel="stylesheet" href="styles.css" />
 </head>
 
@@ -15,9 +20,15 @@
                 <p class="eyebrow">Productivity</p>
                 <h1>To-Do Manager</h1>
             </div>
+            <button id="add-task" type="button" class="primary-btn add-task-btn" aria-label="Add task" title="Add task">+</button>
         </header>
 
-        <section class="panel">
+        <dialog id="task-dialog" class="task-dialog" aria-labelledby="task-dialog-title">
+            <section class="panel dialog-panel">
+                <div class="dialog-heading">
+                    <h2 id="task-dialog-title">Add task</h2>
+                    <button id="close-task-dialog" type="button" class="secondary-btn close-dialog" aria-label="Close">×</button>
+                </div>
             <form id="todo-form" class="todo-form">
                 <label class="field field-wide" for="todo-name">
                     <span>Task</span>
@@ -62,9 +73,13 @@
                         placeholder="Type a new category name" />
                 </label>
 
-                <button type="submit" class="primary-btn">Add task</button>
+                <div class="form-actions field-full">
+                    <button type="button" id="cancel-task" class="secondary-btn">Cancel</button>
+                    <button type="submit" id="submit-task" class="primary-btn">Add task</button>
+                </div>
             </form>
-        </section>
+            </section>
+        </dialog>
 
         <section class="panel toolbar" aria-label="Todo controls">
             <p id="task-summary">0 tasks left</p>
@@ -104,6 +119,13 @@
 
     <script src="xlsx.full.min.js"></script>
     <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch((error) => {
+                console.error('Unable to enable offline support:', error);
+            }));
+        }
+    </script>
 </body>
 
 </html>

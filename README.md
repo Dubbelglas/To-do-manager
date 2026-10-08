@@ -29,6 +29,14 @@ Then browse to http://localhost:8000.
 - `styles.css` — layout and styling
 - `app.js` — task logic and persistence
 
+## Install on Android
+
+Publish this folder to a static host that serves it over HTTPS, then open the site in Chrome on Android. Use Chrome's menu and choose **Install app** or **Add to Home screen**. The app shell is cached for offline use after the first successful visit; tasks remain stored in that browser on that device.
+
+Opening `index.html` as a local file does not enable installation or offline caching. Service workers require HTTPS (or localhost during development).
+
+The Android install metadata is in `manifest.webmanifest`, the offline cache is managed by `service-worker.js`, and the app icon is `icons/app-icon.svg`.
+
 ## Notes
 
 This project is intentionally lightweight and does not require a build step or external dependencies.
