@@ -26,7 +26,8 @@ const deadlineInput = document.querySelector('#todo-deadline');
 const periodicInput = document.querySelector('#todo-periodic');
 const list = document.querySelector('#todo-list');
 const periodicList = document.querySelector('#periodic-todo-list');
-const summary = document.querySelector('#task-summary');
+const taskCount = document.querySelector('#task-count');
+const periodicTaskCount = document.querySelector('#periodic-task-count');
 const clearCompletedButton = document.querySelector('#clear-completed');
 const completeVisibleButton = document.querySelector('#complete-visible');
 const importButton = document.querySelector('#import-tasks');
@@ -409,8 +410,6 @@ function render() {
     const toggleState = toggleTasks.length === 0 || completedVisibleCount === 0
         ? 'unchecked'
         : completedVisibleCount === toggleTasks.length ? 'checked' : 'mixed';
-    const remaining = state.tasks.filter((task) => !task.completed).length;
-
     if (sortSelect) {
         sortSelect.value = state.sortMode === 'deadline' ? '1' : '0';
         sortSelect.setAttribute('aria-valuetext', state.sortMode === 'deadline' ? 'Deadline' : 'Priority');
@@ -420,7 +419,10 @@ function render() {
         });
     }
 
-    summary.textContent = `${remaining} task${remaining === 1 ? '' : 's'} left`;
+    taskCount.textContent = String(visibleTasks.length);
+    taskCount.setAttribute('aria-label', `${visibleTasks.length} task${visibleTasks.length === 1 ? '' : 's'}`);
+    periodicTaskCount.textContent = String(periodicTasks.length);
+    periodicTaskCount.setAttribute('aria-label', `${periodicTasks.length} periodic task${periodicTasks.length === 1 ? '' : 's'}`);
     completeVisibleButton.dataset.state = toggleState;
     completeVisibleButton.setAttribute('aria-pressed', toggleState === 'mixed' ? 'mixed' : String(toggleState === 'checked'));
     completeVisibleButton.setAttribute('aria-label', toggleState === 'checked'
