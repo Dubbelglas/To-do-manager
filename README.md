@@ -28,7 +28,9 @@ Then open <http://localhost:8000>. Browsers treat localhost as a secure context 
 
 - `index.html` — app page and relative asset links
 - `styles.css` — responsive layout and styling
-- `app.js` — task behavior and local storage
+- `app.js` — page rendering and user interactions
+- `task-data.js` — task state, storage, sorting, and formatting
+- `spreadsheet.js` — `.xlsx` import and export
 - `manifest.webmanifest` — install name, display mode, start URL, and icons
 - `service-worker.js` — offline app shell cache
 - `icons/` — app icons
