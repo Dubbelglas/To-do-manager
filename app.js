@@ -34,7 +34,10 @@ const importButton = document.querySelector('#import-tasks');
 const importInput = document.querySelector('#import-file');
 const exportButton = document.querySelector('#export-tasks');
 const sortSelect = document.querySelector('#sort-tasks');
-const categoryFilterSelect = document.querySelector('#category-filter');
+const openCategoryFilterButton = document.querySelector('#open-category-filter');
+const categoryFilterControl = document.querySelector('.category-filter-control');
+const categoryFilterMenu = document.querySelector('#category-filter-menu');
+const toolbar = document.querySelector('.toolbar');
 const taskDialog = document.querySelector('#task-dialog');
 const dialogTitle = document.querySelector('#task-dialog-title');
 const submitTaskButton = document.querySelector('#submit-task');
@@ -141,11 +144,16 @@ function refreshCategoryFilterOptions() {
         state.categoryFilter = '';
     }
 
-    categoryFilterSelect.innerHTML = [
-        '<option value="">--All--</option>',
-        ...categories.map((category) => `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`),
-    ].join('');
-    categoryFilterSelect.value = state.categoryFilter;
+    const options = [['', 'All categories'], ...categories.map((category) => [category, category])];
+    categoryFilterMenu.innerHTML = options.map(([value, label]) => `
+        <button type="button" class="category-filter-option" role="option" data-category="${escapeHtml(value)}"
+            aria-selected="${state.categoryFilter === value}">${escapeHtml(label)}</button>
+    `).join('');
+    openCategoryFilterButton.classList.toggle('has-category-filter', Boolean(state.categoryFilter));
+    openCategoryFilterButton.setAttribute('aria-label', state.categoryFilter
+        ? `Category filter: ${state.categoryFilter}`
+        : 'Choose task category');
+    openCategoryFilterButton.title = openCategoryFilterButton.getAttribute('aria-label');
 }
 
 function updateNewCategoryVisibility() {
@@ -425,9 +433,34 @@ sortSelect?.addEventListener('keydown', (event) => {
     render();
 });
 
-categoryFilterSelect.addEventListener('change', () => {
-    state.categoryFilter = categoryFilterSelect.value;
+function setCategoryFilterOpen(isOpen) {
+    categoryFilterControl.classList.toggle('is-open', isOpen);
+    toolbar.classList.toggle('category-filter-open', isOpen);
+    openCategoryFilterButton.setAttribute('aria-expanded', String(isOpen));
+}
+
+categoryFilterMenu.addEventListener('click', (event) => {
+    const option = event.target.closest('[data-category]');
+    if (!option) return;
+
+    state.categoryFilter = option.dataset.category;
+    setCategoryFilterOpen(false);
     render();
+});
+
+categoryFilterMenu.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    setCategoryFilterOpen(false);
+    openCategoryFilterButton.focus();
+});
+
+openCategoryFilterButton.addEventListener('click', () => {
+    setCategoryFilterOpen(!categoryFilterControl.classList.contains('is-open'));
+});
+
+document.addEventListener('click', (event) => {
+    if (categoryFilterControl.contains(event.target)) return;
+    setCategoryFilterOpen(false);
 });
 
 categorySelect.addEventListener('change', () => {

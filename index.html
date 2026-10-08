@@ -135,6 +135,18 @@
                             <path class="checkbox-mixed" d="M8 12h8" />
                         </svg>
                     </button>
+                    <div class="category-filter-control">
+                        <button id="open-category-filter" type="button" class="secondary-btn icon-btn"
+                            aria-label="Choose task category" title="Choose task category" aria-expanded="false"
+                            aria-controls="category-filter-menu">
+                            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M3.5 5.5h7l10 9-6 6-11-10v-5Z" />
+                                <circle cx="7.5" cy="9.5" r="1" />
+                            </svg>
+                        </button>
+                        <div id="category-filter-menu" class="category-filter-menu" role="listbox" aria-label="Filter tasks by category">
+                        </div>
+                    </div>
                     <button id="import-tasks" type="button" class="secondary-btn icon-btn"
                         aria-label="Import spreadsheet" title="Import spreadsheet">
                         <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -165,14 +177,6 @@
                 <span>Tasks</span>
                 <span id="task-count" class="task-count" aria-label="0 tasks" aria-live="polite">0</span>
             </summary>
-            <div class="task-pane-controls">
-                <label class="sort-control" for="category-filter">
-                    <span>Category</span>
-                    <select id="category-filter" name="category-filter">
-                        <option value="">--All--</option>
-                    </select>
-                </label>
-            </div>
             <ul id="todo-list" class="todo-list" aria-live="polite"></ul>
         </details>
 
