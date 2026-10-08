@@ -1,4 +1,6 @@
 const STORAGE_KEY = 'todo-manager-v1';
+const STORAGE_VERSION_KEY = 'todo-manager-schema-version';
+const CURRENT_STORAGE_VERSION = 2;
 const PRIORITY_LABELS = {
     low: 'Low',
     medium: 'Medium',
@@ -128,7 +130,17 @@ function loadTasks() {
             return [];
         }
 
-        return JSON.parse(storedTasks).map(normalizeTask);
+        const parsed = JSON.parse(storedTasks);
+
+        if (Array.isArray(parsed)) {
+            return parsed.map(normalizeTask);
+        }
+
+        if (parsed && typeof parsed === 'object' && Array.isArray(parsed.tasks)) {
+            return parsed.tasks.map(normalizeTask);
+        }
+
+        return [];
     } catch (error) {
         console.error('Unable to load tasks:', error);
         return [];
@@ -137,7 +149,13 @@ function loadTasks() {
 
 function saveTasks() {
     try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.tasks));
+        const payload = {
+            version: CURRENT_STORAGE_VERSION,
+            tasks: state.tasks,
+        };
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        localStorage.setItem(STORAGE_VERSION_KEY, String(CURRENT_STORAGE_VERSION));
         return true;
     } catch (error) {
         console.error('Unable to save tasks:', error);
@@ -218,6 +236,10 @@ function getVisibleTasks() {
         : state.tasks;
 
     return sortTasks(tasks.filter((task) => !task.periodic));
+}
+
+function getVisiblePeriodicTasks() {
+    return sortTasks(state.tasks.filter((task) => task.periodic && (!state.categoryFilter || (task.category || 'General').trim() === state.categoryFilter)));
 }
 
 function sortTasks(tasks) {
@@ -350,7 +372,7 @@ function render() {
     refreshCategoryOptions(categorySelect?.value || '');
     refreshCategoryFilterOptions();
     const visibleTasks = getVisibleTasks();
-    const periodicTasks = sortTasks(state.tasks.filter((task) => task.periodic));
+    const periodicTasks = getVisiblePeriodicTasks();
     const remaining = state.tasks.filter((task) => !task.completed).length;
 
     if (sortSelect) {
@@ -365,7 +387,7 @@ function render() {
                 ${renderTaskView(task)}
             </li>
         `)
-        .join('')
+            .join('')
         : `<li class="empty-state">${emptyMessage}</li>`;
 
     list.innerHTML = renderTasks(visibleTasks, 'No tasks in this view yet.');
@@ -463,7 +485,7 @@ clearCompletedButton.addEventListener('click', () => {
 });
 
 completeVisibleButton.addEventListener('click', () => {
-    const visibleTasks = [...getVisibleTasks(), ...state.tasks.filter((task) => task.periodic)];
+    const visibleTasks = [...getVisibleTasks(), ...getVisiblePeriodicTasks()];
     if (!visibleTasks.length) {
         return;
     }
