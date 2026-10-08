@@ -467,3 +467,17 @@ h1 {
     outline: 2px solid var(--accent);
     outline-offset: -4px;
 }
+
+.add-task-btn {
+    position: fixed;
+    right: max(20px, env(safe-area-inset-right));
+    bottom: max(20px, env(safe-area-inset-bottom));
+    z-index: 900;
+    width: 56px;
+    min-width: 56px;
+    height: 56px;
+    flex: 0 0 56px;
+    padding: 0;
+    border-radius: 50%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
