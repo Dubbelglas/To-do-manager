@@ -62,7 +62,7 @@ function getDeadlineColorClass(deadline) {
     const daysUntil = Math.round((dueDate - today) / 86400000);
 
     if (daysUntil < 0) return 'date-overdue';
-    if (daysUntil === 1) return 'date-tomorrow';
+    if (daysUntil < 1) return 'date-tomorrow';
     if (daysUntil <= 7) return 'date-soon';
     return '';
 }

@@ -85,7 +85,9 @@ textarea {
     backdrop-filter: blur(4px);
 }
 
-.dialog-panel { overflow: hidden; }
+.dialog-panel {
+    overflow: hidden;
+}
 
 .dialog-heading {
     display: flex;
@@ -94,7 +96,10 @@ textarea {
     padding: 18px 18px 0;
 }
 
-.dialog-heading h2 { margin: 0; font-size: 1.35rem; }
+.dialog-heading h2 {
+    margin: 0;
+    font-size: 1.35rem;
+}
 
 .close-dialog {
     padding: 4px 12px;
@@ -330,7 +335,7 @@ h1 {
     outline-offset: -2px;
 }
 
-.category-filter-option + .category-filter-option {
+.category-filter-option+.category-filter-option {
     margin-top: 2px;
 }
 
@@ -662,8 +667,8 @@ h1 {
 }
 
 .badge.date-soon {
-    background: rgba(250, 204, 21, 0.18);
-    color: #fde047;
+    background: rgba(202, 138, 4, 0.14);
+    color: #d4b65c;
 }
 
 .editor-grid {
@@ -796,7 +801,10 @@ h1 {
     }
 }
 
-.todo-form .secondary-btn { background: rgba(185, 189, 178, 0.14); color: var(--text); }
+.todo-form .secondary-btn {
+    background: rgba(185, 189, 178, 0.14);
+    color: var(--text);
+}
 
 .periodic-toggle input {
     width: 18px;
