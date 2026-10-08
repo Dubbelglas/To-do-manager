@@ -375,7 +375,11 @@ function renderTaskView(task) {
                     ${task.deadline ? `<span class="badge date">Due ${formatDate(task.deadline)}</span>` : ''}
                     <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
                 </div>
-                <button type="button" class="secondary-btn small" data-action="edit" data-id="${task.id}" aria-label="Edit ${escapeHtml(task.name)}">Edit</button>
+                <button type="button" class="secondary-btn icon-btn task-edit-btn" data-action="edit" data-id="${task.id}" aria-label="Edit ${escapeHtml(task.name)}" title="Edit task">
+                    <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m15 5 4 4M4 20l4-.8L19.2 8a2.1 2.1 0 0 0-3-3L5 16.2 4 20Z" />
+                    </svg>
+                </button>
             </div>
 
             ${task.description ? `<p class="task-description">${escapeHtml(task.description)}</p>` : ''}
@@ -389,6 +393,11 @@ function render() {
     refreshCategoryFilterOptions();
     const visibleTasks = getVisibleTasks();
     const periodicTasks = getVisiblePeriodicTasks();
+    const toggleTasks = [...visibleTasks, ...periodicTasks];
+    const completedVisibleCount = toggleTasks.filter((task) => task.completed).length;
+    const toggleState = toggleTasks.length === 0 || completedVisibleCount === 0
+        ? 'unchecked'
+        : completedVisibleCount === toggleTasks.length ? 'checked' : 'mixed';
     const remaining = state.tasks.filter((task) => !task.completed).length;
 
     if (sortSelect) {
@@ -396,6 +405,12 @@ function render() {
     }
 
     summary.textContent = `${remaining} task${remaining === 1 ? '' : 's'} left`;
+    completeVisibleButton.dataset.state = toggleState;
+    completeVisibleButton.setAttribute('aria-pressed', toggleState === 'mixed' ? 'mixed' : String(toggleState === 'checked'));
+    completeVisibleButton.setAttribute('aria-label', toggleState === 'checked'
+        ? 'Mark visible tasks incomplete'
+        : 'Mark visible tasks complete');
+    completeVisibleButton.title = completeVisibleButton.getAttribute('aria-label');
 
     const renderTasks = (tasks, emptyMessage) => tasks.length
         ? tasks.map((task) => `

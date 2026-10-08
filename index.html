@@ -98,11 +98,33 @@
                         <option value="deadline">Deadline</option>
                     </select>
                 </label>
-                <button id="import-tasks" type="button" class="secondary-btn">Import .xlsx</button>
-                <input id="import-file" type="file" accept=".xlsx,.xls,.csv" hidden />
-                <button id="export-tasks" type="button" class="secondary-btn">Export .xlsx</button>
-                <button id="complete-visible" type="button" class="secondary-btn">Toggle visible tasks</button>
-                <button id="clear-completed" type="button" class="secondary-btn">Clear completed</button>
+                <div class="toolbar-icon-actions" aria-label="Task actions">
+                    <button id="import-tasks" type="button" class="secondary-btn icon-btn" aria-label="Import spreadsheet" title="Import spreadsheet">
+                        <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3.5 3.5h10l3 3V20a1 1 0 0 1-1 1h-12a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" />
+                            <path d="M13.5 3.5v4h4M6 10h7M6 13h7M6 16h7M19 10v8m-3-3 3 3 3-3" />
+                        </svg>
+                    </button>
+                    <input id="import-file" type="file" accept=".xlsx,.xls,.csv" hidden />
+                    <button id="export-tasks" type="button" class="secondary-btn icon-btn" aria-label="Export spreadsheet" title="Export spreadsheet">
+                        <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3.5 3.5h10l3 3V20a1 1 0 0 1-1 1h-12a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" />
+                            <path d="M13.5 3.5v4h4M6 10h7M6 13h7M6 16h7M19 18v-8m-3 3 3-3 3 3" />
+                        </svg>
+                    </button>
+                    <button id="complete-visible" type="button" class="secondary-btn icon-btn" aria-label="Toggle completion for visible tasks" title="Toggle completion for visible tasks" data-state="unchecked">
+                        <svg class="icon-svg checkbox-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3.5" y="3.5" width="17" height="17" rx="3" />
+                            <path class="checkbox-mark" d="m7.5 12.5 3 3 6.5-7" />
+                            <path class="checkbox-mixed" d="M8 12h8" />
+                        </svg>
+                    </button>
+                    <button id="clear-completed" type="button" class="secondary-btn icon-btn" aria-label="Clear completed tasks" title="Clear completed tasks">
+                        <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 4v5m4-5v5" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </section>
 
