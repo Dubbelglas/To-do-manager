@@ -51,6 +51,19 @@ function showConfirmation(message) {
     }, 3000);
 }
 
+function getDeadlineColorClass(deadline) {
+    const [year, month, day] = deadline.split('-').map(Number);
+    const dueDate = Date.UTC(year, month - 1, day);
+    const now = new Date();
+    const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    const daysUntil = Math.round((dueDate - today) / 86400000);
+
+    if (daysUntil < 0) return 'date-overdue';
+    if (daysUntil === 1) return 'date-tomorrow';
+    if (daysUntil <= 7) return 'date-soon';
+    return '';
+}
+
 function updateCategoryValidation() {
     const categoryNeedsName = categorySelect.value === '__new__';
     const categoryIsMissing = !categorySelect.value;
@@ -162,7 +175,7 @@ function renderTaskView(task) {
             <div class="meta">
                 ${task.description ? `<button type="button" class="details-indicator" data-action="toggle-details" aria-controls="task-details-${escapeHtml(task.id)}" aria-expanded="${state.expandedTaskIds.has(task.id)}" aria-label="Show details for ${escapeHtml(task.name)}" ${state.expandedTaskIds.has(task.id) ? 'hidden' : ''}>•••</button>` : ''}
                 <span class="badge category">${escapeHtml(task.category || 'General')}</span>
-                ${task.deadline ? `<span class="badge date">Due ${formatDate(task.deadline)}</span>` : ''}
+                ${task.deadline ? `<span class="badge date ${getDeadlineColorClass(task.deadline)}">Due ${formatDate(task.deadline)}</span>` : ''}
                 <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
             </div>
 

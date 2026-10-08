@@ -589,6 +589,21 @@ h1 {
     color: var(--text-soft);
 }
 
+.badge.date-overdue {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+}
+
+.badge.date-tomorrow {
+    background: rgba(249, 115, 22, 0.2);
+    color: #fdba74;
+}
+
+.badge.date-soon {
+    background: rgba(250, 204, 21, 0.18);
+    color: #fde047;
+}
+
 .editor-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(160px, 1fr));
