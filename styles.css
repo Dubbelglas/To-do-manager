@@ -98,6 +98,14 @@ textarea {
     line-height: 1;
 }
 
+.dialog-heading .close-dialog {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    padding: 4px;
+}
+
 .form-actions {
     display: flex;
     justify-content: flex-end;
