@@ -11,6 +11,7 @@ const PRIORITY_LABELS = {
 const state = {
     tasks: loadTasks(),
     editingId: null,
+    expandedTaskIds: new Set(),
     sortMode: 'priority',
     categoryFilter: '',
 };
@@ -377,24 +378,31 @@ function renderTaskView(task) {
     return `
         <div class="task-card">
             <div class="task-main-row">
-                <label class="todo-main">
-                    <input type="checkbox" data-action="toggle" data-id="${task.id}" ${task.completed ? 'checked' : ''} />
-                    <span class="todo-text">${escapeHtml(task.name)}</span>
-                </label>
-
-                <div class="meta">
-                    <span class="badge category">${escapeHtml(task.category || 'General')}</span>
-                    ${task.deadline ? `<span class="badge date">Due ${formatDate(task.deadline)}</span>` : ''}
-                    <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
-                    <button type="button" class="secondary-btn icon-btn task-edit-btn" data-action="edit" data-id="${task.id}" aria-label="Edit ${escapeHtml(task.name)}" title="Edit task">
-                        <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="m15 5 4 4M4 20l4-.8L19.2 8a2.1 2.1 0 0 0-3-3L5 16.2 4 20Z" />
-                        </svg>
-                    </button>
+                <div class="todo-main">
+                    <input type="checkbox" data-action="toggle" data-id="${task.id}" aria-label="Mark ${escapeHtml(task.name)} complete" ${task.completed ? 'checked' : ''} />
+                    ${task.description
+            ? `<button type="button" class="todo-text task-name-toggle" data-action="toggle-details" aria-controls="task-details-${escapeHtml(task.id)}" aria-expanded="${state.expandedTaskIds.has(task.id)}">${escapeHtml(task.name)}</button>`
+            : `<span class="todo-text">${escapeHtml(task.name)}</span>`}
                 </div>
+
+                <button type="button" class="secondary-btn icon-btn task-edit-btn" data-action="edit" data-id="${task.id}" aria-label="Edit ${escapeHtml(task.name)}" title="Edit task">
+                    <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m15 5 4 4M4 20l4-.8L19.2 8a2.1 2.1 0 0 0-3-3L5 16.2 4 20Z" />
+                    </svg>
+                </button>
             </div>
 
-            ${task.description ? `<p class="task-description">${escapeHtml(task.description)}</p>` : ''}
+            <div class="meta">
+                <span class="badge category">${escapeHtml(task.category || 'General')}</span>
+                ${task.deadline ? `<span class="badge date">Due ${formatDate(task.deadline)}</span>` : ''}
+                <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
+            </div>
+
+            ${task.description ? `
+                <div id="task-details-${escapeHtml(task.id)}" class="task-details" ${state.expandedTaskIds.has(task.id) ? '' : 'hidden'}>
+                    <p class="task-description">${escapeHtml(task.description)}</p>
+                </div>
+            ` : ''}
 
         </div>
     `;
@@ -522,6 +530,16 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('click', 
     }
 
     const { action, id } = button.dataset;
+    if (action === 'toggle-details') {
+        const expanded = button.getAttribute('aria-expanded') === 'true';
+        const details = button.closest('.todo-item')?.querySelector('.task-details');
+        button.setAttribute('aria-expanded', String(!expanded));
+        if (details) details.hidden = expanded;
+        if (expanded) state.expandedTaskIds.delete(button.closest('.todo-item').dataset.id);
+        else state.expandedTaskIds.add(button.closest('.todo-item').dataset.id);
+        return;
+    }
+
     if (action === 'edit') {
         const task = state.tasks.find((item) => item.id === id);
         if (task) openTaskDialog(task);

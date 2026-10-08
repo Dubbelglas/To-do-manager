@@ -149,6 +149,13 @@ h1 {
     color: var(--text-soft);
 }
 
+.category-field-stack {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    min-width: 0;
+}
+
 .field span {
     font-weight: 600;
 }
@@ -315,7 +322,8 @@ h1 {
     position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    min-width: 260px;
+    width: 108px;
+    min-width: 108px;
     padding: 0;
     overflow: hidden;
     border: 1px solid rgba(185, 189, 178, 0.25);
@@ -345,11 +353,20 @@ h1 {
     z-index: 1;
     padding: 8px 10px;
     color: var(--text-soft);
-    font-size: 0.82rem;
     text-align: center;
-    white-space: nowrap;
     pointer-events: none;
     transition: color 180ms ease;
+}
+
+.sort-option-icon {
+    display: block;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .sort-slider-control[data-mode="priority"] [data-sort-option="priority"],
@@ -394,7 +411,11 @@ h1 {
     color: var(--text-soft);
 }
 
-.task-card,
+.task-card {
+    display: grid;
+    gap: 4px;
+}
+
 .task-editor {
     display: grid;
     gap: 12px;
@@ -404,7 +425,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 8px;
 }
 
 .todo-main {
@@ -424,6 +445,30 @@ h1 {
 .todo-text {
     word-break: break-word;
     font-weight: 700;
+}
+
+.task-name-toggle {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.task-name-toggle:hover {
+    color: var(--accent);
+}
+
+.task-name-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 3px;
+}
+
+.task-details[hidden] {
+    display: none;
 }
 
 .meta {
@@ -563,16 +608,20 @@ h1 {
     }
 
     .sort-slider {
-        width: 100%;
-        min-width: 0;
+        width: 108px;
+        min-width: 108px;
     }
 
     .task-main-row {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
     }
 
-    .meta,
+    .meta {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
     .task-actions {
         justify-content: flex-start;
     }
@@ -636,6 +685,19 @@ h1 {
 .task-pane-controls .sort-control,
 .task-pane-controls select {
     width: 100%;
+}
+
+.task-pane-controls .sort-control {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.task-pane-controls .sort-control select {
+    width: auto;
+    min-width: 0;
+    max-width: 280px;
+    flex: 1;
 }
 
 .task-pane-controls select {

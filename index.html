@@ -37,10 +37,18 @@
                         required />
                 </label>
 
-                <label class="field" for="todo-category">
-                    <span>Category</span>
-                    <select id="todo-category" name="category"></select>
-                </label>
+                <div class="category-field-stack">
+                    <label class="field" for="todo-category">
+                        <span>Category</span>
+                        <select id="todo-category" name="category"></select>
+                    </label>
+
+                    <label id="todo-new-category-wrap" class="field hidden" for="todo-new-category">
+                        <span>New category</span>
+                        <input id="todo-new-category" name="newCategory" type="text" maxlength="60"
+                            placeholder="Type a new category name" />
+                    </label>
+                </div>
 
                 <label class="field" for="todo-priority">
                     <span>Priority</span>
@@ -68,12 +76,6 @@
                         placeholder="Add more detail if needed"></textarea>
                 </label>
 
-                <label id="todo-new-category-wrap" class="field field-full hidden" for="todo-new-category">
-                    <span>New category</span>
-                    <input id="todo-new-category" name="newCategory" type="text" maxlength="60"
-                        placeholder="Type a new category name" />
-                </label>
-
                 <div class="form-actions field-full">
                     <button type="button" id="cancel-task" class="secondary-btn">Cancel</button>
                     <button type="submit" id="submit-task" class="primary-btn">Add task</button>
@@ -87,8 +89,19 @@
                 <div class="sort-slider-control" data-mode="priority">
                     <div id="sort-tasks" class="sort-slider" role="slider" tabindex="0" aria-label="Sort by priority or deadline"
                         aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" aria-valuetext="Priority">
-                        <span id="sort-option-priority" data-sort-option="priority">Priority</span>
-                        <span id="sort-option-deadline" data-sort-option="deadline">Deadline</span>
+                        <span id="sort-option-priority" data-sort-option="priority" aria-hidden="true">
+                            <svg class="sort-option-icon" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="9" />
+                                <path d="M12 7v6" />
+                                <circle cx="12" cy="16.5" r=".7" />
+                            </svg>
+                        </span>
+                        <span id="sort-option-deadline" data-sort-option="deadline" aria-hidden="true">
+                            <svg class="sort-option-icon" viewBox="0 0 24 24">
+                                <rect x="4" y="5.5" width="16" height="15" rx="2" />
+                                <path d="M8 3.5v4M16 3.5v4M4 10h16M8 13.5h.01M12 13.5h.01M16 13.5h.01M8 17h.01M12 17h.01" />
+                            </svg>
+                        </span>
                     </div>
                 </div>
                 <div class="toolbar-icon-actions" aria-label="Task actions">
