@@ -655,44 +655,6 @@ h1 {
     display: none;
 }
 
-.fireworks-layer {
-    position: fixed;
-    inset: 0;
-    z-index: 1100;
-    overflow: hidden;
-    pointer-events: none;
-}
-
-.firework-particle {
-    position: fixed;
-    top: var(--firework-y);
-    left: var(--firework-x);
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--firework-color);
-    box-shadow: 0 0 8px var(--firework-color);
-    animation: firework-flight 700ms ease-out var(--firework-delay) forwards;
-}
-
-@keyframes firework-flight {
-    0% {
-        transform: translate(-50%, -50%) scale(0.5);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(calc(-50% + var(--firework-dx)), calc(-50% + var(--firework-dy))) scale(0);
-        opacity: 0;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .firework-particle {
-        animation: none;
-    }
-}
-
 .task-edit-btn {
     width: 38px;
     min-width: 38px;
