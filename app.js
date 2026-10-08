@@ -25,6 +25,10 @@ const periodicList = document.querySelector('#periodic-todo-list');
 const taskCount = document.querySelector('#task-count');
 const periodicTaskCount = document.querySelector('#periodic-task-count');
 const clearCompletedButton = document.querySelector('#clear-completed');
+const deleteConfirmDialog = document.querySelector('#delete-confirm-dialog');
+const deleteConfirmMessage = document.querySelector('#delete-confirm-message');
+const cancelDeleteButton = document.querySelector('#cancel-delete');
+const confirmDeleteButton = document.querySelector('#confirm-delete');
 const completeVisibleButton = document.querySelector('#complete-visible');
 const importButton = document.querySelector('#import-tasks');
 const importInput = document.querySelector('#import-file');
@@ -156,6 +160,7 @@ function renderTaskView(task) {
             </div>
 
             <div class="meta">
+                ${task.description ? `<span class="details-indicator" aria-hidden="true" ${state.expandedTaskIds.has(task.id) ? 'hidden' : ''}>•••</span>` : ''}
                 <span class="badge category">${escapeHtml(task.category || 'General')}</span>
                 ${task.deadline ? `<span class="badge date">Due ${formatDate(task.deadline)}</span>` : ''}
                 <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
@@ -296,8 +301,10 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('click', 
     if (action === 'toggle-details') {
         const expanded = button.getAttribute('aria-expanded') === 'true';
         const details = button.closest('.todo-item')?.querySelector('.task-details');
+        const indicator = button.closest('.todo-item')?.querySelector('.details-indicator');
         button.setAttribute('aria-expanded', String(!expanded));
         if (details) details.hidden = expanded;
+        if (indicator) indicator.hidden = !expanded;
         if (expanded) state.expandedTaskIds.delete(button.closest('.todo-item').dataset.id);
         else state.expandedTaskIds.add(button.closest('.todo-item').dataset.id);
         return;
@@ -309,15 +316,44 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('click', 
     }
 });
 
+function closeDeleteConfirmDialog() {
+    if (typeof deleteConfirmDialog.close === 'function') {
+        deleteConfirmDialog.close();
+    } else {
+        deleteConfirmDialog.removeAttribute('open');
+    }
+}
+
 clearCompletedButton.addEventListener('click', () => {
+    const completedCount = state.tasks.filter((task) => task.completed).length;
+    if (!completedCount) return;
+
+    deleteConfirmMessage.textContent = `Delete ${completedCount} completed task${completedCount === 1 ? '' : 's'}? This action cannot be undone.`;
+    if (typeof deleteConfirmDialog.showModal === 'function') {
+        deleteConfirmDialog.showModal();
+    } else {
+        deleteConfirmDialog.setAttribute('open', '');
+    }
+});
+
+cancelDeleteButton.addEventListener('click', closeDeleteConfirmDialog);
+
+confirmDeleteButton.addEventListener('click', () => {
     const removedCount = state.tasks.filter((task) => task.completed).length;
+    if (!removedCount) {
+        closeDeleteConfirmDialog();
+        return;
+    }
+
+    for (const task of state.tasks) {
+        if (task.completed) state.expandedTaskIds.delete(task.id);
+    }
     state.tasks = state.tasks.filter((task) => !task.completed);
     state.editingId = null;
     const saved = saveTasks();
+    closeDeleteConfirmDialog();
     render();
-    if (removedCount > 0 && saved) {
-        showConfirmation(`${removedCount} completed task${removedCount === 1 ? '' : 's'} deleted.`);
-    }
+    if (saved) showConfirmation(`${removedCount} completed task${removedCount === 1 ? '' : 's'} deleted.`);
 });
 
 completeVisibleButton.addEventListener('click', () => {
