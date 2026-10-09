@@ -218,6 +218,20 @@
         </details>
     </main>
 
+    <dialog id="first-run-warning" class="task-dialog first-run-warning" aria-labelledby="first-run-warning-title">
+        <section class="panel dialog-panel first-run-warning-panel">
+            <div class="dialog-heading">
+                <h2 id="first-run-warning-title">A quick note before you start</h2>
+            </div>
+            <div class="first-run-warning-content">
+                <p>Your task list is stored locally in this browser. If you clear the browser cache or site data, your tasks will disappear. Export your tasks regularly to keep a backup.</p>
+                <p><strong>Random fact:</strong> <span id="welcome-fact"></span></p>
+                <p><strong>Dad joke:</strong> <span id="welcome-joke"></span></p>
+                <button id="dismiss-first-run-warning" type="button" class="primary-btn">OK, close</button>
+            </div>
+        </section>
+    </dialog>
+
     <script src="xlsx.full.min.js"></script>
     <script src="task-data.js"></script>
     <script src="app.js"></script>

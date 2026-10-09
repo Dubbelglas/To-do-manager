@@ -89,6 +89,24 @@ textarea {
     width: min(440px, calc(100vw - 24px));
 }
 
+.first-run-warning {
+    width: min(520px, calc(100vw - 24px));
+}
+
+.first-run-warning-content {
+    padding: 12px 18px 18px;
+    line-height: 1.55;
+}
+
+.first-run-warning-content p {
+    margin: 8px 0 14px;
+}
+
+.first-run-warning-content .primary-btn {
+    display: block;
+    margin: 18px 0 0 auto;
+}
+
 .task-dialog[open] {
     position: fixed;
     inset: 0;

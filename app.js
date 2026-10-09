@@ -438,8 +438,56 @@
 
     window.setTimeout(() => {
         const loadingScreen = document.querySelector('#loading-screen');
+        const warningDialog = document.querySelector('#first-run-warning');
+        const facts = [
+            'Octopuses have three hearts.',
+            'A day on Venus is longer than its year.',
+            'Honey can stay edible for thousands of years when sealed.',
+            'Bananas are berries, but strawberries are not.',
+            'Some turtles can breathe through their bottoms.'
+        ];
+        const jokes = [
+            'Why did the scarecrow win an award? Because he was outstanding in his field.',
+            'I only know 25 letters of the alphabet. I don’t know y.',
+            'Why did the bicycle fall over? It was two-tired.',
+            'What do you call cheese that isn’t yours? Nacho cheese.',
+            'I used to hate facial hair, but then it grew on me.'
+        ];
+        let loadingFinished = false;
+
+        const showWelcomeWarning = () => {
+            if (loadingFinished) return;
+            loadingFinished = true;
+            loadingScreen.remove();
+
+            let warningSeen = false;
+            try {
+                warningSeen = localStorage.getItem('todo-manager-welcome-warning-seen') === 'true';
+            } catch (error) {
+                console.error('Unable to check whether the welcome warning was seen:', error);
+            }
+
+            if (!warningSeen) {
+                document.querySelector('#welcome-fact').textContent = facts[Math.floor(Math.random() * facts.length)];
+                document.querySelector('#welcome-joke').textContent = jokes[Math.floor(Math.random() * jokes.length)];
+                warningDialog.showModal();
+            }
+        };
+
         loadingScreen.classList.add('is-hidden');
-        loadingScreen.addEventListener('transitionend', () => loadingScreen.remove(), { once: true });
+        loadingScreen.addEventListener('transitionend', (event) => {
+            if (event.target === loadingScreen && event.propertyName === 'opacity') showWelcomeWarning();
+        }, { once: true });
+        window.setTimeout(showWelcomeWarning, 600);
+
+        document.querySelector('#dismiss-first-run-warning').addEventListener('click', () => {
+            try {
+                localStorage.setItem('todo-manager-welcome-warning-seen', 'true');
+            } catch (error) {
+                console.error('Unable to remember that the welcome warning was seen:', error);
+            }
+            warningDialog.close();
+        });
     }, 200);  // Time the loading screen is shown before fading out, in milliseconds
 
 })();
