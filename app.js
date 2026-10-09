@@ -192,8 +192,8 @@ function renderTaskView(task) {
             <div class="meta">
                 ${task.description ? `<button type="button" class="details-indicator" data-action="toggle-details" aria-controls="task-details-${escapeHtml(task.id)}" aria-expanded="${state.expandedTaskIds.has(task.id)}" aria-label="Show details for ${escapeHtml(task.name)}" ${state.expandedTaskIds.has(task.id) ? 'hidden' : ''}>•••</button>` : ''}
                 <span class="badge category">${escapeHtml(task.category || 'General')}</span>
-                ${task.deadline ? `<span class="badge date ${getDeadlineColorClass(task.deadline)}">Due ${formatDate(task.deadline)}</span>` : ''}
                 <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
+                ${task.deadline ? `<span class="badge date ${getDeadlineColorClass(task.deadline)}">Due ${formatDate(task.deadline)}</span>` : ''}
             </div>
 
             ${task.description ? `
