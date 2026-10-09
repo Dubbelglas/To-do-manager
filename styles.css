@@ -7,6 +7,7 @@
     --text: #f0f1eb;
     --text-soft: #b9bdb2;
     --accent: #facc15;
+    --accent-periodic: #84cc16;
     --accent-strong: #eab308;
     --success: #84cc16;
     --warning: #facc15;
@@ -314,7 +315,7 @@ h1 {
     justify-content: center;
 }
 
-.toolbar-icon-actions .icon-btn > .icon-svg {
+.toolbar-icon-actions .icon-btn>.icon-svg {
     flex: 0 0 24px;
 }
 
@@ -612,7 +613,9 @@ h1 {
     display: flex;
     align-items: center;
     gap: 6px;
-    flex-wrap: wrap;
+    flex: 0 1 auto;
+    min-width: 0;
+    flex-wrap: nowrap;
     justify-content: flex-end;
 }
 
@@ -620,8 +623,8 @@ h1 {
     padding: 0;
     border: 0;
     background: transparent;
-    margin-right: auto;
-    margin-left: 25px;
+    flex: 0 0 auto;
+    margin-left: calc(-9px + 0.25em);
     color: var(--text-soft);
     font-size: 0.8rem;
     letter-spacing: 0.16em;
@@ -647,13 +650,13 @@ h1 {
     margin: 0;
 }
 
-.task-description p + p,
-.task-description p + ul,
-.task-description p + ol,
-.task-description ul + p,
-.task-description ol + p,
-.task-description ul + ol,
-.task-description ol + ul {
+.task-description p+p,
+.task-description p+ul,
+.task-description p+ol,
+.task-description ul+p,
+.task-description ol+p,
+.task-description ul+ol,
+.task-description ol+ul {
     margin-top: 0.5em;
 }
 
@@ -823,7 +826,7 @@ h1 {
     }
 
     .meta {
-        width: 100%;
+        width: auto;
         justify-content: flex-end;
     }
 
@@ -884,7 +887,7 @@ h1 {
 }
 
 .periodic-pane .todo-item {
-    --task-separator-color: var(--success);
+    --task-separator-color: var(--accent-periodic);
 }
 
 .todo-item:not(:first-child)::before {
@@ -948,6 +951,12 @@ h1 {
     height: 34px;
     padding: 6px;
     flex: 0 0 34px;
+}
+
+@media (max-width: 640px) {
+    .task-edit-btn {
+        display: none;
+    }
 }
 
 .add-task-btn {

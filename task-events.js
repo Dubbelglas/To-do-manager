@@ -236,7 +236,59 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('dblclick
     openTaskDialog(state.tasks.find((task) => task.id === item.dataset.id));
 });
 
+const supportsLongPress = window.matchMedia('(pointer: coarse)').matches;
+let longPressTimer = null;
+let longPressTriggered = false;
+let longPressClickResetTimer = null;
+let longPressStart = null;
+const clearLongPress = () => {
+    window.clearTimeout(longPressTimer);
+    longPressTimer = null;
+    longPressStart = null;
+};
+
+if (supportsLongPress) {
+    for (const taskList of [list, periodicList]) {
+        taskList.addEventListener('pointerdown', (event) => {
+            if (event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
+            if (event.target.closest('input, button, select, textarea, a')) return;
+            const item = event.target.closest('.todo-item');
+            if (!item) return;
+
+            clearLongPress();
+            longPressStart = { x: event.clientX, y: event.clientY, item };
+            longPressTimer = window.setTimeout(() => {
+                const task = state.tasks.find((entry) => entry.id === item.dataset.id);
+                if (!task) return;
+                longPressTriggered = true;
+                window.clearTimeout(longPressClickResetTimer);
+                longPressClickResetTimer = window.setTimeout(() => { longPressTriggered = false; }, 1200);
+                openTaskDialog(task);
+            }, 550);
+        });
+        taskList.addEventListener('pointermove', (event) => {
+            if (!longPressStart) return;
+            if (Math.hypot(event.clientX - longPressStart.x, event.clientY - longPressStart.y) > 12) {
+                clearLongPress();
+            }
+        });
+        for (const eventName of ['pointerup', 'pointercancel', 'pointerleave']) {
+            taskList.addEventListener(eventName, clearLongPress);
+        }
+        taskList.addEventListener('contextmenu', (event) => {
+            if (event.target.closest('.todo-item')) event.preventDefault();
+        });
+    }
+}
+
 for (const taskList of [list, periodicList]) taskList.addEventListener('click', (event) => {
+    if (longPressTriggered) {
+        longPressTriggered = false;
+        window.clearTimeout(longPressClickResetTimer);
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+    }
     const button = event.target.closest('[data-action]');
     if (!button) {
         return;
