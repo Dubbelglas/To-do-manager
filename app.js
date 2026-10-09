@@ -290,7 +290,7 @@
                 <!-- Badge: deadline -->
                 <div class="meta">
                     <span class="badge category">${escapeHtml(task.category || 'General')}</span>
-                    <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
+                    <span class="badge ${task.priority}">${({ low: 'Low', medium: 'Med', high: 'Hi', 'very-high': 'vHi' })[task.priority]}</span>
                     ${task.deadline ? `<span class="badge date ${getDeadlineColorClass(task.deadline)}">${formatDate(task.deadline)}</span>` : ''}
                 </div>
 
