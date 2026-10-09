@@ -1043,6 +1043,8 @@ h1 {
 
 .add-task-btn {
     position: fixed;
+    display: grid;
+    place-items: center;
     right: max(20px, env(safe-area-inset-right));
     bottom: max(20px, env(safe-area-inset-bottom));
     z-index: 900;
@@ -1051,8 +1053,38 @@ h1 {
     height: 56px;
     flex: 0 0 56px;
     padding: 0;
+    line-height: 1;
     border-radius: 50%;
     box-shadow: 0 8px 24px var(--shadow);
+}
+
+.add-task-icon {
+    position: relative;
+    display: block;
+    width: 22px;
+    height: 22px;
+}
+
+.add-task-icon::before,
+.add-task-icon::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    border-radius: 2px;
+    background: currentColor;
+    content: "";
+    transform: translate(-50%, -50%);
+}
+
+.add-task-icon::before {
+    width: 22px;
+    height: 2px;
+}
+
+.add-task-icon::after {
+    width: 2px;
+    height: 22px;
 }
 
 .loading-screen {
