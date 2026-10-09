@@ -80,3 +80,42 @@
 
     window.TaskSpreadsheet = { importTasks, exportTasks, NO_VALID_ROWS };
 })();
+
+importButton.addEventListener('click', () => {
+    importInput.click();
+});
+
+importInput.addEventListener('change', async (event) => {
+    const [file] = event.target.files;
+    if (!file) return;
+
+    try {
+        const importedTasks = await TaskSpreadsheet.importTasks(file);
+        state.tasks = [...importedTasks, ...state.tasks];
+        const saved = saveTasks();
+        render();
+        if (saved) showConfirmation('Spreadsheet imported successfully.');
+    } catch (error) {
+        if (error.code === TaskSpreadsheet.NO_VALID_ROWS) {
+            alert('No valid rows were found in the selected file. Use columns: category, priority, task, details, deadline.');
+        } else {
+            console.error('Unable to import tasks:', error);
+            alert('The file could not be read. Please make sure it is a valid .xlsx, .xls, or .csv spreadsheet.');
+        }
+    } finally {
+        importInput.value = '';
+    }
+});
+
+exportButton.addEventListener('click', async () => {
+    try {
+        const result = await TaskSpreadsheet.exportTasks(state.tasks);
+        showConfirmation(result === 'saved'
+            ? 'Spreadsheet exported successfully.'
+            : 'Spreadsheet download started.');
+    } catch (error) {
+        if (error.name === 'AbortError') return;
+        console.error('Unable to export tasks:', error);
+        alert('The spreadsheet could not be exported.');
+    }
+});

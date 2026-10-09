@@ -1,4 +1,4 @@
-const CACHE_NAME = 'todo-manager-pages-v33';
+const CACHE_NAME = 'todo-manager-pages-v38';
 const APP_FILES = [
     './',
     './index.html',
@@ -6,6 +6,8 @@ const APP_FILES = [
     './app.js',
     './task-data.js',
     './spreadsheet.js',
+    './task-events.js',
+    './toolbar.js',
     './xlsx.full.min.js',
     './manifest.webmanifest',
     './icons/app-icon.svg',
