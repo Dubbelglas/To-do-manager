@@ -538,3 +538,9 @@ exportButton.addEventListener('click', async () => {
 refreshCategoryOptions();
 render();
 
+window.setTimeout(() => {
+    const loadingScreen = document.querySelector('#loading-screen');
+    loadingScreen.classList.add('is-hidden');
+    loadingScreen.addEventListener('transitionend', () => loadingScreen.remove(), { once: true });
+}, 500);
+

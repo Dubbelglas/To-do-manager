@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>#TODO</title>
+    <title>TODO</title>
     <meta name="theme-color" content="#141512" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -15,13 +15,13 @@
 </head>
 
 <body>
+    <div id="loading-screen" class="loading-screen" role="status" aria-label="Loading TODO">
+        <span>TODO</span>
+    </div>
     <main class="app-shell">
         <div id="confirmation-banner" class="confirmation-banner" role="status" aria-live="polite" aria-atomic="true"
             hidden></div>
         <header class="topbar">
-            <div>
-                <h1>#TODO</h1>
-            </div>
             <button id="add-task" type="button" class="primary-btn add-task-btn" aria-label="Add task"
                 title="Add task">+</button>
         </header>
@@ -144,7 +144,8 @@
                                 <circle cx="7.5" cy="9.5" r="1" />
                             </svg>
                         </button>
-                        <div id="category-filter-menu" class="category-filter-menu" role="listbox" aria-label="Filter tasks by category">
+                        <div id="category-filter-menu" class="category-filter-menu" role="listbox"
+                            aria-label="Filter tasks by category">
                         </div>
                     </div>
                     <button id="import-tasks" type="button" class="secondary-btn icon-btn"
