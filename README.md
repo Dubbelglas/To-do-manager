@@ -6,6 +6,10 @@ Features include task categories, priorities, details, deadlines, recurring task
 
 The sort slider switches between priority and deadline sorting. Its selection is saved in the browser and restored when the app starts; deadline sorting is the default until a selection has been saved.
 
+## Warning
+
+The tasks are stored in the browser cache. Clearing the cache will delete the tasks. Make sure to export the tasks periodically as an `.xlsx` file.
+
 ## GitHub Pages
 
 This is a static site with no build step. In the repository's **Settings → Pages**, select **Deploy from a branch**, then choose the branch containing this version and the repository root (`/`) as the folder. Once the deployment completes, visit:
