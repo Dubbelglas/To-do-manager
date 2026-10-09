@@ -4,11 +4,13 @@ A lightweight task manager built with HTML, CSS, and JavaScript. Tasks are store
 
 Features include task categories, priorities, details, deadlines, recurring tasks, completion tracking, sorting and filtering, task import/export in `.xlsx` format, and a shared pop-up form for adding and editing tasks.
 
+The sort slider switches between priority and deadline sorting. Its selection is saved in the browser and restored when the app starts; deadline sorting is the default until a selection has been saved.
+
 ## GitHub Pages
 
 This is a static site with no build step. In the repository's **Settings → Pages**, select **Deploy from a branch**, then choose the branch containing this version and the repository root (`/`) as the folder. Once the deployment completes, visit:
 
-<https://dubbelglas.github.io/To-do-manager/>
+<https://dubbelglas.github.io/todo/>
 
 The app uses paths relative to its site directory, so the manifest, icons, and service worker work from a GitHub Pages project URL. The service worker caches the app shell for offline use and only removes caches belonging to this app.
 
