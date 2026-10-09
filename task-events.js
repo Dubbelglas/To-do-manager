@@ -247,11 +247,30 @@ const clearLongPress = () => {
     longPressStart = null;
 };
 
+function toggleTaskDetails(item) {
+    if (!item) return;
+    const details = item.querySelector('.task-details');
+    const nameToggle = item.querySelector('.task-name-toggle');
+    const indicator = item.querySelector('.details-indicator');
+    const isExpanded = state.expandedTaskIds.has(item.dataset.id);
+    const nextExpanded = !isExpanded;
+    for (const toggle of [nameToggle, indicator]) {
+        toggle?.setAttribute('aria-expanded', String(nextExpanded));
+    }
+    if (details) details.hidden = !nextExpanded;
+    if (indicator) indicator.hidden = nextExpanded;
+    if (nextExpanded) state.expandedTaskIds.add(item.dataset.id);
+    else state.expandedTaskIds.delete(item.dataset.id);
+}
+
 if (supportsLongPress) {
     for (const taskList of [list, periodicList]) {
         taskList.addEventListener('pointerdown', (event) => {
             if (event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
-            if (event.target.closest('input, button, select, textarea, a')) return;
+            if (event.target.closest('.task-details')) return;
+            const control = event.target.closest('input, button, select, textarea, a');
+            if (control && !control.matches('.task-name-toggle')) return;
+            if (!event.target.closest('.task-main-row')) return;
             const item = event.target.closest('.todo-item');
             if (!item) return;
 
@@ -289,33 +308,30 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('click', 
         event.stopPropagation();
         return;
     }
+    const item = event.target.closest('.todo-item');
     const button = event.target.closest('[data-action]');
-    if (!button) {
+    if (button?.dataset.action === 'toggle-details') {
+        toggleTaskDetails(item);
         return;
     }
 
-    const { action, id } = button.dataset;
-    if (action === 'toggle-details') {
-        const expanded = button.getAttribute('aria-expanded') === 'true';
-        const item = button.closest('.todo-item');
-        const details = item?.querySelector('.task-details');
-        const nameToggle = item?.querySelector('.task-name-toggle');
-        const indicator = item?.querySelector('.details-indicator');
-        const nextExpanded = !expanded;
-        for (const toggle of [nameToggle, indicator]) {
-            toggle?.setAttribute('aria-expanded', String(nextExpanded));
+    if (event.target.closest('.task-details')) {
+        toggleTaskDetails(item);
+        return;
+    }
+
+    if (!event.target.closest('.task-main-row')) return;
+    if (button) {
+        const { action, id } = button.dataset;
+        if (action === 'edit') {
+            const task = state.tasks.find((entry) => entry.id === id);
+            if (task) openTaskDialog(task);
         }
-        if (details) details.hidden = expanded;
-        if (indicator) indicator.hidden = !expanded;
-        if (expanded) state.expandedTaskIds.delete(item.dataset.id);
-        else state.expandedTaskIds.add(item.dataset.id);
         return;
     }
 
-    if (action === 'edit') {
-        const task = state.tasks.find((item) => item.id === id);
-        if (task) openTaskDialog(task);
-    }
+    if (event.target.closest('input, select, textarea, a')) return;
+    toggleTaskDetails(item);
 });
 
 function closeDeleteConfirmDialog() {
