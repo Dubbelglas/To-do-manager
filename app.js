@@ -53,6 +53,7 @@
     const confirmationBanner = document.querySelector('#confirmation-banner');
     let categoryValidationAttempted = false;
     let confirmationTimer = null;
+    let taskDialogHistoryToken = null;
 
     function showConfirmation(message) {
         confirmationBanner.textContent = message;
@@ -107,6 +108,8 @@
         }
         updateNewCategoryVisibility();
         if (typeof taskDialog.showModal === 'function') {
+            taskDialogHistoryToken = `task-dialog-${Date.now()}-${Math.random()}`;
+            window.history.pushState({ ...window.history.state, taskDialogToken: taskDialogHistoryToken }, '');
             taskDialog.showModal();
         } else {
             taskDialog.setAttribute('open', '');
@@ -126,6 +129,17 @@
         priorityInput.value = 'medium';
         refreshCategoryOptions();
     }
+
+    taskDialog.addEventListener('close', () => {
+        if (taskDialogHistoryToken && window.history.state?.taskDialogToken === taskDialogHistoryToken) {
+            window.history.back();
+        }
+        taskDialogHistoryToken = null;
+    });
+
+    window.addEventListener('popstate', () => {
+        if (taskDialog.open) closeTaskDialog();
+    });
 
     function refreshCategoryOptions(selectedValue = '') {
         const categories = getCategories();
