@@ -50,7 +50,11 @@ textarea {
 
 .app-shell {
     width: min(840px, calc(100vw - 24px));
+    min-height: 100vh;
+    min-height: 100dvh;
     padding: max(24px, env(safe-area-inset-top)) 0 max(32px, env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
 }
 
 .topbar {
@@ -913,6 +917,10 @@ h1 {
     background: transparent;
     box-shadow: none;
     backdrop-filter: none;
+}
+
+.periodic-pane {
+    margin-bottom: auto;
 }
 
 .tasks-pane .todo-item {
