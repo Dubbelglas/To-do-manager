@@ -1,5 +1,5 @@
 :root {
-    --bg: #141512;
+    --bg: #000000;
     --panel: #1d1f1b;
     --panel-alt: #292b26;
     --card: #343630;
@@ -24,7 +24,7 @@ body {
     min-height: 100dvh;
     display: grid;
     place-items: center;
-    background: linear-gradient(135deg, #11120f 0%, #20211d 48%, #151612 100%);
+    background: #000000;
     color: var(--text);
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -905,7 +905,7 @@ h1 {
     z-index: 2000;
     display: grid;
     place-items: center;
-    background: linear-gradient(135deg, #11120f 0%, #20211d 48%, #151612 100%);
+    background: #000000;
     color: var(--text);
     font-size: clamp(2.5rem, 10vw, 5rem);
     font-weight: 800;

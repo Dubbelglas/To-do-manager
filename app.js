@@ -542,5 +542,5 @@ window.setTimeout(() => {
     const loadingScreen = document.querySelector('#loading-screen');
     loadingScreen.classList.add('is-hidden');
     loadingScreen.addEventListener('transitionend', () => loadingScreen.remove(), { once: true });
-}, 500);
+}, 200);  // Time the loading screen is shown before fading out, in milliseconds
 
