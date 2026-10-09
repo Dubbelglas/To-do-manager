@@ -144,8 +144,11 @@
                 ? PRIORITY_ORDER[b.priority] - PRIORITY_ORDER[a.priority]
                 : compareDeadlineValues(a, b);
             if (primaryComparison !== 0) return primaryComparison;
-            if (secondaryKey === 'priority') return PRIORITY_ORDER[b.priority] - PRIORITY_ORDER[a.priority];
-            return compareDeadlineValues(a, b);
+            const secondaryComparison = secondaryKey === 'priority'
+                ? PRIORITY_ORDER[b.priority] - PRIORITY_ORDER[a.priority]
+                : compareDeadlineValues(a, b);
+            if (secondaryComparison !== 0) return secondaryComparison;
+            return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
         });
     }
 
