@@ -47,6 +47,7 @@ form.addEventListener('submit', (event) => {
 
     const name = nameInput.value.trim();
     if (!name) {
+        nameInput.classList.add('name-invalid');
         nameInput.focus();
         return;
     }
@@ -80,6 +81,14 @@ form.addEventListener('submit', (event) => {
     closeTaskDialog();
     render();
     if (addingTask && saved) showConfirmation('Task added successfully.');
+});
+
+nameInput.addEventListener('invalid', () => {
+    nameInput.classList.add('name-invalid');
+});
+
+nameInput.addEventListener('input', () => {
+    if (nameInput.value.trim()) nameInput.classList.remove('name-invalid');
 });
 
 descriptionInput.addEventListener('keydown', (event) => {

@@ -96,6 +96,7 @@
         dialogTitle.textContent = task ? 'Edit task' : 'Add task';
         submitTaskButton.textContent = task ? 'Save changes' : 'Add task';
         form.reset();
+        nameInput.classList.remove('name-invalid');
         priorityInput.value = task?.priority || 'medium';
         nameInput.value = task?.name || '';
         descriptionInput.value = task?.description || '';
