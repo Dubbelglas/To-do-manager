@@ -1,6 +1,7 @@
 (() => {
     const STORAGE_KEY = 'todo-manager-v1';
     const STORAGE_VERSION_KEY = 'todo-manager-schema-version';
+    const SORT_MODE_STORAGE_KEY = 'todo-manager-sort-mode';
     const CURRENT_STORAGE_VERSION = 2;
     const PRIORITY_LABELS = {
         low: 'Low',
@@ -79,11 +80,21 @@
         }
     }
 
+    function loadSortMode() {
+        try {
+            const storedMode = localStorage.getItem(SORT_MODE_STORAGE_KEY);
+            return storedMode === 'priority' || storedMode === 'deadline' ? storedMode : 'deadline';
+        } catch (error) {
+            console.error('Unable to load sort mode:', error);
+            return 'deadline';
+        }
+    }
+
     const state = {
         tasks: loadTasks(),
         editingId: null,
         expandedTaskIds: new Set(),
-        sortMode: 'priority',
+        sortMode: loadSortMode(),
         categoryFilter: '',
     };
 
@@ -96,6 +107,17 @@
         } catch (error) {
             console.error('Unable to save tasks:', error);
             alert('Tasks changed in this session but could not be saved in this browser.');
+            return false;
+        }
+    }
+
+    function saveSortMode(sortMode) {
+        if (sortMode !== 'priority' && sortMode !== 'deadline') return false;
+        try {
+            localStorage.setItem(SORT_MODE_STORAGE_KEY, sortMode);
+            return true;
+        } catch (error) {
+            console.error('Unable to save sort mode:', error);
             return false;
         }
     }
@@ -198,6 +220,7 @@
         normalizePriority,
         getPriorityDisplayName,
         saveTasks,
+        saveSortMode,
         escapeHtml,
         getCategories,
         createTask,

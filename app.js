@@ -4,6 +4,7 @@ const {
     normalizePriority,
     getPriorityDisplayName,
     saveTasks,
+    saveSortMode,
     escapeHtml,
     getCategories,
     createTask,
@@ -320,6 +321,7 @@ function render() {
         ? 'unchecked'
         : completedVisibleCount === toggleTasks.length ? 'checked' : 'mixed';
     if (sortSelect) {
+        saveSortMode(state.sortMode);
         const sortValue = state.sortMode === 'deadline' ? '1' : '0';
         sortSelect.setAttribute('aria-valuenow', sortValue);
         sortSelect.setAttribute('aria-valuetext', state.sortMode === 'deadline' ? 'Deadline' : 'Priority');
