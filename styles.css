@@ -1,30 +1,23 @@
 :root {
     --bg: #000000;
     --panel: #1d1f1b;
-    --panel-rgb: 29, 31, 27;
     --text: #f0f1eb;
     --text-soft: #b9bdb2;
     --text-badge: #d8dbd2;
-    --neutral-rgb: 185, 189, 178;
     --control-bg: rgba(20, 21, 18, 0.82);
     --overlay: rgba(10, 11, 9, 0.82);
     --accent: #facc15;
     --accent-periodic: #84cc16;
     --accent-strong: #eab308;
-    --badge-low: #84cc16;
-    --badge-low-rgb: 132, 204, 22;
-    --badge-medium: #facc15;
-    --badge-medium-rgb: 250, 204, 21;
-    --badge-high: #f97316;
-    --badge-high-rgb: 249, 115, 22;
-    --badge-very-high: #ef4444;
-    --badge-very-high-rgb: 239, 68, 68;
+    --badge-low: #70e000;
+    --badge-medium: #ffd000;
+    --badge-high: #ff6500;
+    --badge-very-high: #ff2929;
     --success: #84cc16;
     --success-banner: #86efac;
     --success-banner-border: rgba(187, 247, 208, 0.35);
     --success-banner-text: #12301d;
     --danger: #ef4444;
-    --danger-rgb: 239, 68, 68;
     --text-on-accent: #24240f;
     --danger-text: #fff;
     --checkbox-gray: #a1a1aa;
@@ -184,8 +177,8 @@ h1 {
 }
 
 .panel {
-    background: rgba(var(--panel-rgb), 0.94);
-    border: 1px solid rgba(var(--neutral-rgb), 0.18);
+    background: rgb(from var(--panel) r g b / 0.94);
+    border: 1px solid rgb(from var(--text-soft) r g b / 0.18);
     border-radius: 18px;
     box-shadow: 0 20px 45px var(--shadow);
     backdrop-filter: blur(12px);
@@ -249,7 +242,7 @@ h1 {
 .task-editor textarea {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid rgba(var(--neutral-rgb), 0.3);
+    border: 1px solid rgb(from var(--text-soft) r g b / 0.3);
     border-radius: 12px;
     background: var(--control-bg);
     color: var(--text);
@@ -257,7 +250,7 @@ h1 {
 
 .todo-form .category-invalid {
     border-color: var(--danger);
-    box-shadow: 0 0 0 2px rgba(var(--danger-rgb), 0.28);
+    box-shadow: 0 0 0 2px rgb(from var(--danger) r g b / 0.28);
 }
 
 .todo-form textarea,
@@ -351,7 +344,7 @@ h1 {
     z-index: 1100;
     min-width: 190px;
     padding: 8px;
-    border: 1px solid rgba(var(--neutral-rgb), 0.25);
+    border: 1px solid rgb(from var(--text-soft) r g b / 0.25);
     border-radius: 12px;
     background: var(--panel);
     box-shadow: 0 12px 28px var(--shadow);
@@ -375,7 +368,7 @@ h1 {
 
 .category-filter-option:hover,
 .category-filter-option[aria-selected="true"] {
-    background: rgba(var(--accent-rgb), 0.14);
+    background: rgb(from var(--accent) r g b / 0.14);
     color: var(--accent);
 }
 
@@ -395,20 +388,20 @@ h1 {
     min-width: 44px;
     height: 44px;
     padding: 9px;
-    border: 1px solid rgba(var(--neutral-rgb), 0.2);
+    border: 1px solid rgb(from var(--text-soft) r g b / 0.2);
     border-radius: 12px;
-    background: rgba(var(--neutral-rgb), 0.1);
+    background: rgb(from var(--text-soft) r g b / 0.1);
     color: var(--text-soft);
 }
 
 .icon-btn:hover {
-    background: rgba(var(--accent-rgb), 0.13);
+    background: rgb(from var(--accent) r g b / 0.13);
     color: var(--accent);
 }
 
 #open-category-filter.has-category-filter {
-    border-color: rgba(var(--accent-rgb), 0.52);
-    background: rgba(var(--accent-rgb), 0.16);
+    border-color: rgb(from var(--accent) r g b / 0.52);
+    background: rgb(from var(--accent) r g b / 0.16);
     color: var(--accent);
 }
 
@@ -457,7 +450,7 @@ h1 {
 .sort-control select {
     min-width: 175px;
     padding: 10px 12px;
-    border: 1px solid rgba(var(--neutral-rgb), 0.3);
+    border: 1px solid rgb(from var(--text-soft) r g b / 0.3);
     border-radius: 12px;
     background: var(--control-bg);
     color: var(--text);
@@ -475,7 +468,7 @@ h1 {
     min-width: 108px;
     padding: 0;
     overflow: hidden;
-    border: 1px solid rgba(var(--neutral-rgb), 0.25);
+    border: 1px solid rgb(from var(--text-soft) r g b / 0.25);
     border-radius: 999px;
     background: var(--control-bg);
 }
@@ -538,7 +531,7 @@ h1 {
 
 .secondary-btn {
     padding: 10px 14px;
-    background: rgba(var(--neutral-rgb), 0.12);
+    background: rgb(from var(--text-soft) r g b / 0.12);
     color: var(--text);
 }
 
@@ -727,47 +720,47 @@ h1 {
 }
 
 .badge.category {
-    background: rgba(var(--neutral-rgb), 0.13);
+    background: rgb(from var(--text-soft) r g b / 0.13);
     color: var(--text-badge);
 }
 
 .badge.low {
-    background: rgba(var(--badge-low-rgb), 0.24);
+    background: rgb(from var(--badge-low) r g b / 0.24);
     color: var(--badge-low);
 }
 
 .badge.medium {
-    background: rgba(var(--badge-medium-rgb), 0.24);
+    background: rgb(from var(--badge-medium) r g b / 0.24);
     color: var(--badge-medium);
 }
 
 .badge.high {
-    background: rgba(var(--badge-high-rgb), 0.28);
+    background: rgb(from var(--badge-high) r g b / 0.28);
     color: var(--badge-high);
 }
 
 .badge.very-high {
-    background: rgba(var(--badge-very-high-rgb), 0.28);
+    background: rgb(from var(--badge-very-high) r g b / 0.28);
     color: var(--badge-very-high);
 }
 
 .badge.date {
-    background: rgba(var(--neutral-rgb), 0.1);
+    background: rgb(from var(--text-soft) r g b / 0.1);
     color: var(--text-soft);
 }
 
 .badge.date-overdue {
-    background: rgba(var(--badge-very-high-rgb), 0.28);
+    background: rgb(from var(--badge-very-high) r g b / 0.28);
     color: var(--badge-very-high);
 }
 
 .badge.date-tomorrow {
-    background: rgba(var(--badge-high-rgb), 0.28);
+    background: rgb(from var(--badge-high) r g b / 0.28);
     color: var(--badge-high);
 }
 
 .badge.date-soon {
-    background: rgba(var(--badge-medium-rgb), 0.24);
+    background: rgb(from var(--badge-medium) r g b / 0.24);
     color: var(--badge-medium);
 }
 
@@ -902,7 +895,7 @@ h1 {
 }
 
 .todo-form .secondary-btn {
-    background: rgba(var(--neutral-rgb), 0.14);
+    background: rgb(from var(--text-soft) r g b / 0.14);
     color: var(--text);
 }
 
@@ -951,9 +944,9 @@ h1 {
     min-width: 28px;
     height: 28px;
     padding: 0 8px;
-    border: 1px solid rgba(var(--accent-rgb), 0.24);
+    border: 1px solid rgb(from var(--accent) r g b / 0.24);
     border-radius: 999px;
-    background: rgba(var(--accent-rgb), 0.1);
+    background: rgb(from var(--accent) r g b / 0.1);
     color: var(--accent);
     font-size: 0.78rem;
     font-variant-numeric: tabular-nums;
