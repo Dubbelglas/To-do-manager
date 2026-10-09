@@ -90,7 +90,27 @@ textarea {
 }
 
 .first-run-warning {
-    width: min(520px, calc(100vw - 24px));
+    position: fixed;
+    inset: 0;
+    z-index: 1500;
+    display: grid;
+    place-items: center;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    padding: 16px;
+    background: var(--overlay);
+    backdrop-filter: blur(4px);
+}
+
+.first-run-warning[hidden] {
+    display: none;
+}
+
+.first-run-warning-panel {
+    width: min(520px, 100%);
+    max-height: 100%;
+    overflow: auto;
 }
 
 .first-run-warning-content {

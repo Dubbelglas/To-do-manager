@@ -454,31 +454,35 @@
             'I used to hate facial hair, but then it grew on me.'
         ];
         let loadingFinished = false;
+        let warningVisible = false;
 
-        const showWelcomeWarning = () => {
+        const finishLoading = () => {
             if (loadingFinished) return;
             loadingFinished = true;
             loadingScreen.remove();
-
-            let warningSeen = false;
-            try {
-                warningSeen = localStorage.getItem('todo-manager-welcome-warning-seen') === 'true';
-            } catch (error) {
-                console.error('Unable to check whether the welcome warning was seen:', error);
-            }
-
-            if (!warningSeen) {
-                document.querySelector('#welcome-fact').textContent = facts[Math.floor(Math.random() * facts.length)];
-                document.querySelector('#welcome-joke').textContent = jokes[Math.floor(Math.random() * jokes.length)];
-                warningDialog.showModal();
-            }
+            if (warningVisible) document.querySelector('#dismiss-first-run-warning').focus();
         };
+
+        let warningSeen = false;
+        try {
+            warningSeen = localStorage.getItem('todo-manager-welcome-warning-seen') === 'true';
+        } catch (error) {
+            console.error('Unable to check whether the welcome warning was seen:', error);
+        }
+
+        if (!warningSeen) {
+            document.querySelector('#welcome-fact').textContent = facts[Math.floor(Math.random() * facts.length)];
+            document.querySelector('#welcome-joke').textContent = jokes[Math.floor(Math.random() * jokes.length)];
+            warningDialog.hidden = false;
+            document.querySelector('.app-shell').inert = true;
+            warningVisible = true;
+        }
 
         loadingScreen.classList.add('is-hidden');
         loadingScreen.addEventListener('transitionend', (event) => {
-            if (event.target === loadingScreen && event.propertyName === 'opacity') showWelcomeWarning();
+            if (event.target === loadingScreen && event.propertyName === 'opacity') finishLoading();
         }, { once: true });
-        window.setTimeout(showWelcomeWarning, 600);
+        window.setTimeout(finishLoading, 600);
 
         document.querySelector('#dismiss-first-run-warning').addEventListener('click', () => {
             try {
@@ -486,7 +490,9 @@
             } catch (error) {
                 console.error('Unable to remember that the welcome warning was seen:', error);
             }
-            warningDialog.close();
+            warningDialog.hidden = true;
+            document.querySelector('.app-shell').inert = false;
+            document.querySelector('#add-task').focus();
         });
     }, 200);  // Time the loading screen is shown before fading out, in milliseconds
 

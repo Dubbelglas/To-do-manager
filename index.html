@@ -218,7 +218,8 @@
         </details>
     </main>
 
-    <dialog id="first-run-warning" class="task-dialog first-run-warning" aria-labelledby="first-run-warning-title">
+    <div id="first-run-warning" class="first-run-warning" role="dialog" aria-modal="true"
+        aria-labelledby="first-run-warning-title" hidden>
         <section class="panel dialog-panel first-run-warning-panel">
             <div class="dialog-heading">
                 <h2 id="first-run-warning-title">A quick note before you start</h2>
@@ -230,7 +231,7 @@
                 <button id="dismiss-first-run-warning" type="button" class="primary-btn">OK, close</button>
             </div>
         </section>
-    </dialog>
+    </div>
 
     <script src="xlsx.full.min.js"></script>
     <script src="task-data.js"></script>
