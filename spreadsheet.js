@@ -81,6 +81,15 @@
     window.TaskSpreadsheet = { importTasks, exportTasks, NO_VALID_ROWS };
 })();
 
+(() => {
+    const {
+        state,
+        saveTasks,
+        render,
+        showConfirmation,
+        elements: { importButton, importInput, exportButton },
+    } = window.TodoApp;
+
 importButton.addEventListener('click', () => {
     importInput.click();
 });
@@ -119,3 +128,5 @@ exportButton.addEventListener('click', async () => {
         alert('The spreadsheet could not be exported.');
     }
 });
+
+})();

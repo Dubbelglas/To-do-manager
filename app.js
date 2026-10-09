@@ -1,3 +1,4 @@
+(() => {
 const {
     state,
     normalizePriority,
@@ -292,7 +293,7 @@ function renderTaskView(task) {
             </div>
 
             <div class="meta">
-                ${task.description ? `<button type="button" class="details-indicator" data-action="toggle-details" aria-controls="task-details-${escapeHtml(task.id)}" aria-expanded="${state.expandedTaskIds.has(task.id)}" aria-label="Show details for ${escapeHtml(task.name)}" ${state.expandedTaskIds.has(task.id) ? 'hidden' : ''}>â€¢â€¢â€¢</button>` : ''}
+                ${task.description ? `<button type="button" class="details-indicator" data-action="toggle-details" aria-controls="task-details-${escapeHtml(task.id)}" aria-expanded="${state.expandedTaskIds.has(task.id)}" aria-label="Show details for ${escapeHtml(task.name)}" ${state.expandedTaskIds.has(task.id) ? 'hidden' : ''}>&hellip;</button>` : ''}
                 <span class="badge category">${escapeHtml(task.category || 'General')}</span>
                 <span class="badge ${task.priority}">${getPriorityDisplayName(task.priority)}</span>
                 ${task.deadline ? `<span class="badge date ${getDeadlineColorClass(task.deadline)}">Due ${formatDate(task.deadline)}</span>` : ''}
@@ -358,6 +359,63 @@ function render() {
     periodicList.innerHTML = renderTasks(periodicTasks, periodicEmptyMessage);
 }
 
+function attemptCategoryValidation() {
+    categoryValidationAttempted = true;
+    updateCategoryValidation();
+}
+
+window.TodoApp = {
+    state,
+    normalizePriority,
+    createTask,
+    saveTasks,
+    getCategories,
+    getDisplayedTasks,
+    render,
+    showConfirmation,
+    updateCategoryValidation,
+    attemptCategoryValidation,
+    updateNewCategoryVisibility,
+    refreshCategoryOptions,
+    openTaskDialog,
+    closeTaskDialog,
+    openRenameCategoryDialog,
+    closeRenameCategoryDialog,
+    elements: {
+        form,
+        nameInput,
+        categorySelect,
+        newCategoryInput,
+        priorityInput,
+        descriptionInput,
+        deadlineInput,
+        periodicInput,
+        list,
+        periodicList,
+        tasksPane,
+        periodicPane,
+        clearCompletedButton,
+        deleteConfirmDialog,
+        deleteConfirmMessage,
+        cancelDeleteButton,
+        confirmDeleteButton,
+        completeVisibleButton,
+        importButton,
+        importInput,
+        exportButton,
+        sortSelect,
+        openCategoryFilterButton,
+        categoryFilterControl,
+        categoryFilterMenu,
+        toolbar,
+        taskDialog,
+        renameCategoryButton,
+        renameCategoryForm,
+        renameCategorySelect,
+        renameCategoryName,
+    },
+};
+
 refreshCategoryOptions();
 render();
 
@@ -366,4 +424,6 @@ window.setTimeout(() => {
     loadingScreen.classList.add('is-hidden');
     loadingScreen.addEventListener('transitionend', () => loadingScreen.remove(), { once: true });
 }, 200);  // Time the loading screen is shown before fading out, in milliseconds
+
+})();
 

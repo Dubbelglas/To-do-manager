@@ -1,3 +1,47 @@
+(() => {
+    const {
+        state,
+        normalizePriority,
+        createTask,
+        saveTasks,
+        getCategories,
+        getDisplayedTasks,
+        render,
+        showConfirmation,
+        updateCategoryValidation,
+        attemptCategoryValidation,
+        refreshCategoryOptions,
+        openTaskDialog,
+        closeTaskDialog,
+        openRenameCategoryDialog,
+        closeRenameCategoryDialog,
+        elements: {
+            form,
+            nameInput,
+            categorySelect,
+            newCategoryInput,
+            priorityInput,
+            descriptionInput,
+            deadlineInput,
+            periodicInput,
+            list,
+            periodicList,
+            tasksPane,
+            periodicPane,
+            clearCompletedButton,
+            deleteConfirmDialog,
+            deleteConfirmMessage,
+            cancelDeleteButton,
+            confirmDeleteButton,
+            completeVisibleButton,
+            taskDialog,
+            renameCategoryButton,
+            renameCategoryForm,
+            renameCategorySelect,
+            renameCategoryName,
+        },
+    } = window.TodoApp;
+
 form.addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -11,8 +55,7 @@ form.addEventListener('submit', (event) => {
     if (selectedCategory === '__new__') {
         const newCategory = newCategoryInput.value.trim();
         if (!newCategory) {
-            categoryValidationAttempted = true;
-            updateCategoryValidation();
+            attemptCategoryValidation();
             newCategoryInput.focus();
             return;
         }
@@ -280,4 +323,6 @@ completeVisibleButton.addEventListener('click', () => {
 for (const pane of [tasksPane, periodicPane]) {
     pane.addEventListener('toggle', render);
 }
+
+})();
 

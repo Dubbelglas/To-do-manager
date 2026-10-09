@@ -1,3 +1,24 @@
+(() => {
+    const {
+        state,
+        render,
+        updateCategoryValidation,
+        attemptCategoryValidation,
+        updateNewCategoryVisibility,
+        elements: {
+            sortSelect,
+            tasksPane,
+            periodicPane,
+            categoryFilterControl,
+            toolbar,
+            openCategoryFilterButton,
+            categoryFilterMenu,
+            categorySelect,
+            newCategoryInput,
+            form,
+        },
+    } = window.TodoApp;
+
 let sortPointerStart = null;
 sortSelect?.addEventListener('pointerdown', (event) => {
     sortPointerStart = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
@@ -72,8 +93,9 @@ categorySelect.addEventListener('change', () => {
 newCategoryInput.addEventListener('input', updateCategoryValidation);
 form.addEventListener('invalid', (event) => {
     if (event.target === categorySelect || event.target === newCategoryInput) {
-        categoryValidationAttempted = true;
-        updateCategoryValidation();
+        attemptCategoryValidation();
     }
 }, true);
+
+})();
 
