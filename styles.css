@@ -25,7 +25,7 @@ body {
     min-height: 100dvh;
     display: grid;
     place-items: center;
-    background: #000000;
+    background: var(--bg);
     color: var(--text);
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -714,23 +714,23 @@ h1 {
 }
 
 .badge.low {
-    background: rgba(132, 204, 22, 0.16);
-    color: #bef264;
+    background: rgba(132, 204, 22, 0.24);
+    color: #a3e635;
 }
 
 .badge.medium {
-    background: rgba(202, 138, 4, 0.14);
-    color: #d4b65c;
+    background: rgba(250, 204, 21, 0.24);
+    color: #facc15;
 }
 
 .badge.high {
-    background: rgba(249, 115, 22, 0.18);
-    color: #fdba74;
+    background: rgba(249, 115, 22, 0.28);
+    color: #fb923c;
 }
 
 .badge.very-high {
-    background: rgba(239, 68, 68, 0.18);
-    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.28);
+    color: #f87171;
 }
 
 .badge.date {
@@ -739,18 +739,18 @@ h1 {
 }
 
 .badge.date-overdue {
-    background: rgba(239, 68, 68, 0.2);
-    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.28);
+    color: #f87171;
 }
 
 .badge.date-tomorrow {
-    background: rgba(249, 115, 22, 0.2);
-    color: #fdba74;
+    background: rgba(249, 115, 22, 0.28);
+    color: #fb923c;
 }
 
 .badge.date-soon {
-    background: rgba(202, 138, 4, 0.14);
-    color: #d4b65c;
+    background: rgba(250, 204, 21, 0.24);
+    color: #facc15;
 }
 
 .editor-grid {
@@ -976,6 +976,7 @@ h1 {
 }
 
 @media (max-width: 640px) {
+
     .task-edit-btn,
     .task-card .badge.category {
         display: none;
