@@ -41,6 +41,11 @@ const categoryFilterControl = document.querySelector('.category-filter-control')
 const categoryFilterMenu = document.querySelector('#category-filter-menu');
 const toolbar = document.querySelector('.toolbar');
 const taskDialog = document.querySelector('#task-dialog');
+const renameCategoryButton = document.querySelector('#rename-category');
+const renameCategoryDialog = document.querySelector('#rename-category-dialog');
+const renameCategoryForm = document.querySelector('#rename-category-form');
+const renameCategorySelect = document.querySelector('#rename-category-select');
+const renameCategoryName = document.querySelector('#rename-category-name');
 const dialogTitle = document.querySelector('#task-dialog-title');
 const submitTaskButton = document.querySelector('#submit-task');
 const confirmationBanner = document.querySelector('#confirmation-banner');
@@ -122,11 +127,12 @@ function closeTaskDialog() {
 
 function refreshCategoryOptions(selectedValue = '') {
     const categories = getCategories();
+    renameCategoryButton.disabled = categories.length === 0;
     const selected = categories.includes(selectedValue) ? selectedValue : '';
 
     categorySelect.innerHTML = [
-        ...categories.map((category) => `<option value="${escapeHtml(category)}" ${category === selected ? 'selected' : ''}>${escapeHtml(category)}</option>`),
         '<option value="__new__">Add new category...</option>',
+        ...categories.map((category) => `<option value="${escapeHtml(category)}" ${category === selected ? 'selected' : ''}>${escapeHtml(category)}</option>`),
     ].join('');
 
     if (selected) {
@@ -138,6 +144,33 @@ function refreshCategoryOptions(selectedValue = '') {
     }
 
     updateNewCategoryVisibility();
+}
+
+function openRenameCategoryDialog() {
+    const categories = getCategories();
+    if (!categories.length) return;
+
+    renameCategorySelect.innerHTML = categories.map((category) =>
+        `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join('');
+    const selectedCategory = categorySelect.value !== '__new__' ? categorySelect.value : state.categoryFilter;
+    renameCategorySelect.value = categories.includes(selectedCategory) ? selectedCategory : categories[0];
+    renameCategoryName.value = '';
+    renameCategoryName.setCustomValidity('');
+    renameCategoryName.classList.remove('category-invalid');
+    if (typeof renameCategoryDialog.showModal === 'function') {
+        renameCategoryDialog.showModal();
+    } else {
+        renameCategoryDialog.setAttribute('open', '');
+    }
+    renameCategoryName.focus();
+}
+
+function closeRenameCategoryDialog() {
+    if (typeof renameCategoryDialog.close === 'function') {
+        renameCategoryDialog.close();
+    } else {
+        renameCategoryDialog.removeAttribute('open');
+    }
 }
 
 function refreshCategoryFilterOptions() {
@@ -301,6 +334,47 @@ document.querySelector('#add-task').addEventListener('click', () => openTaskDial
 document.querySelector('#cancel-task').addEventListener('click', closeTaskDialog);
 document.querySelector('#close-task-dialog').addEventListener('click', closeTaskDialog);
 taskDialog.addEventListener('close', () => { state.editingId = null; });
+
+renameCategoryButton.addEventListener('click', openRenameCategoryDialog);
+document.querySelector('#close-rename-category').addEventListener('click', closeRenameCategoryDialog);
+document.querySelector('#cancel-rename-category').addEventListener('click', closeRenameCategoryDialog);
+renameCategoryName.addEventListener('input', () => {
+    renameCategoryName.setCustomValidity('');
+    renameCategoryName.classList.remove('category-invalid');
+});
+renameCategoryForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const oldCategory = renameCategorySelect.value;
+    const newCategory = renameCategoryName.value.trim();
+    if (!newCategory) {
+        renameCategoryName.reportValidity();
+        return;
+    }
+
+    const normalizedNewCategory = newCategory.toLocaleLowerCase();
+    const duplicate = getCategories().some((category) => category !== oldCategory
+        && category.toLocaleLowerCase() === normalizedNewCategory);
+    if (duplicate) {
+        renameCategoryName.setCustomValidity('A category with this name already exists.');
+        renameCategoryName.classList.add('category-invalid');
+        renameCategoryName.reportValidity();
+        return;
+    }
+    if (newCategory === oldCategory) {
+        closeRenameCategoryDialog();
+        return;
+    }
+
+    state.tasks.forEach((task) => {
+        if ((task.category || 'General').trim() === oldCategory) task.category = newCategory;
+    });
+    if (state.categoryFilter === oldCategory) state.categoryFilter = newCategory;
+    if (categorySelect.value === oldCategory) refreshCategoryOptions(newCategory);
+    const saved = saveTasks();
+    closeRenameCategoryDialog();
+    render();
+    if (saved) showConfirmation(`Category renamed to ${newCategory}.`);
+});
 
 for (const taskList of [list, periodicList]) taskList.addEventListener('change', (event) => {
     const checkbox = event.target.closest('input[type="checkbox"][data-action="toggle"]');

@@ -42,10 +42,13 @@
                     </label>
 
                     <div class="category-field-stack">
-                        <label class="field" for="todo-category">
-                            <span>Category</span>
-                            <select id="todo-category" name="category"></select>
-                        </label>
+                        <div class="category-select-row">
+                            <label class="field" for="todo-category">
+                                <span>Category</span>
+                                <select id="todo-category" name="category"></select>
+                            </label>
+                            <button id="rename-category" type="button" class="secondary-btn">Rename</button>
+                        </div>
 
                         <label id="todo-new-category-wrap" class="field hidden" for="todo-new-category">
                             <span>New category</span>
@@ -53,7 +56,6 @@
                                 placeholder="Type a new category name" />
                         </label>
                     </div>
-
                     <label class="field" for="todo-priority">
                         <span>Priority</span>
                         <select id="todo-priority" name="priority">
@@ -83,6 +85,31 @@
                     <div class="form-actions field-full">
                         <button type="button" id="cancel-task" class="secondary-btn">Cancel</button>
                         <button type="submit" id="submit-task" class="primary-btn">Add task</button>
+                    </div>
+                </form>
+            </section>
+        </dialog>
+
+        <dialog id="rename-category-dialog" class="task-dialog delete-confirm-dialog"
+            aria-labelledby="rename-category-title">
+            <section class="panel dialog-panel">
+                <div class="dialog-heading">
+                    <h2 id="rename-category-title">Rename category</h2>
+                    <button id="close-rename-category" type="button" class="secondary-btn close-dialog"
+                        aria-label="Close">×</button>
+                </div>
+                <form id="rename-category-form" class="todo-form">
+                    <label class="field field-full" for="rename-category-select">
+                        <span>Category to rename</span>
+                        <select id="rename-category-select" required></select>
+                    </label>
+                    <label class="field field-full" for="rename-category-name">
+                        <span>New category name</span>
+                        <input id="rename-category-name" type="text" maxlength="60" required />
+                    </label>
+                    <div class="form-actions field-full">
+                        <button id="cancel-rename-category" type="button" class="secondary-btn">Cancel</button>
+                        <button type="submit" class="primary-btn">Rename</button>
                     </div>
                 </form>
             </section>

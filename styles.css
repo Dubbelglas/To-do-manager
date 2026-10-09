@@ -192,6 +192,25 @@ h1 {
     align-content: start;
     gap: 12px;
     min-width: 0;
+    grid-column: 1 / -1;
+}
+
+.category-select-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 0;
+}
+
+.category-select-row .field {
+    flex: 1;
+    min-width: 0;
+}
+
+.category-select-row .secondary-btn {
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
 }
 
 .field span {
