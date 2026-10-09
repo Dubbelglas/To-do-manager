@@ -191,6 +191,75 @@ function refreshCategoryFilterOptions() {
     openCategoryFilterButton.title = openCategoryFilterButton.getAttribute('aria-label');
 }
 
+function renderDescription(description) {
+    const lines = String(description).replace(/\r\n?/g, '\n').split('\n');
+    const blocks = [];
+    const getListItem = (line) => {
+        const match = line.match(/^(\s*)([-*+]|\d+[.)])\s+(.+)$/);
+        if (!match) return null;
+        return {
+            indent: match[1].replace(/\t/g, '    ').length,
+            type: /^\d/.test(match[2]) ? 'ol' : 'ul',
+            text: match[3],
+        };
+    };
+
+    const renderList = (start, indent, type) => {
+        const items = [];
+        let index = start;
+        while (index < lines.length) {
+            const item = getListItem(lines[index]);
+            if (!item || item.indent < indent) break;
+            if (item.indent > indent) {
+                if (items.length) {
+                    const nested = renderList(index, item.indent, item.type);
+                    items[items.length - 1] += nested.html;
+                    index = nested.nextIndex;
+                    continue;
+                }
+                break;
+            }
+            if (item.type !== type) break;
+
+            index += 1;
+            let nestedHtml = '';
+            while (index < lines.length) {
+                const nestedItem = getListItem(lines[index]);
+                if (!nestedItem || nestedItem.indent <= indent) break;
+                const nested = renderList(index, nestedItem.indent, nestedItem.type);
+                nestedHtml += nested.html;
+                index = nested.nextIndex;
+            }
+            items.push(`<li>${escapeHtml(item.text)}${nestedHtml}</li>`);
+        }
+        return { html: `<${type}>${items.join('')}</${type}>`, nextIndex: index };
+    };
+
+    let index = 0;
+    while (index < lines.length) {
+        if (!lines[index].trim()) {
+            index += 1;
+            continue;
+        }
+
+        const item = getListItem(lines[index]);
+        if (item) {
+            const rendered = renderList(index, item.indent, item.type);
+            blocks.push(rendered.html);
+            index = rendered.nextIndex;
+            continue;
+        }
+
+        const paragraph = [];
+        while (index < lines.length && lines[index].trim() && !getListItem(lines[index])) {
+            paragraph.push(lines[index]);
+            index += 1;
+        }
+        blocks.push(`<p>${paragraph.map(escapeHtml).join('<br>')}</p>`);
+    }
+    return blocks.join('');
+}
+
 function updateNewCategoryVisibility() {
     const showNewCategory = categorySelect.value === '__new__';
     newCategoryWrap.classList.toggle('hidden', !showNewCategory);
@@ -231,7 +300,7 @@ function renderTaskView(task) {
 
             ${task.description ? `
                 <div id="task-details-${escapeHtml(task.id)}" class="task-details" ${state.expandedTaskIds.has(task.id) ? '' : 'hidden'}>
-                    <p class="task-description">${escapeHtml(task.description)}</p>
+                    <div class="task-description">${renderDescription(task.description)}</div>
                 </div>
             ` : ''}
 
@@ -328,6 +397,86 @@ form.addEventListener('submit', (event) => {
     closeTaskDialog();
     render();
     if (addingTask && saved) showConfirmation('Task added successfully.');
+});
+
+descriptionInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Backspace' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey
+        && descriptionInput.selectionStart === descriptionInput.selectionEnd) {
+        const value = descriptionInput.value;
+        const caret = descriptionInput.selectionStart;
+        const lineStart = value.lastIndexOf('\n', caret - 1) + 1;
+        const leadingWhitespace = value.slice(lineStart, caret);
+        if (/^[ \t]+$/.test(leadingWhitespace)) {
+            event.preventDefault();
+            const removeCount = leadingWhitespace.endsWith('\t')
+                ? 1
+                : Math.min(2, leadingWhitespace.match(/ *$/)[0].length);
+            descriptionInput.value = `${value.slice(0, caret - removeCount)}${value.slice(caret)}`;
+            descriptionInput.setSelectionRange(caret - removeCount, caret - removeCount);
+            return;
+        }
+    }
+
+    if (event.key === 'Tab' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
+        event.preventDefault();
+        const value = descriptionInput.value;
+        const selectionStart = descriptionInput.selectionStart;
+        const selectionEnd = descriptionInput.selectionEnd;
+        const indent = '  ';
+
+        if (selectionStart === selectionEnd) {
+            const lineStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
+            descriptionInput.value = `${value.slice(0, lineStart)}${indent}${value.slice(lineStart)}`;
+            descriptionInput.setSelectionRange(selectionStart + indent.length, selectionEnd + indent.length);
+            return;
+        }
+
+        const firstLineStart = value.lastIndexOf('\n', selectionStart - 1) + 1;
+        let lastSelectedPosition = selectionEnd - 1;
+        if (value[lastSelectedPosition] === '\n') lastSelectedPosition -= 1;
+        const lastLineStart = value.lastIndexOf('\n', lastSelectedPosition) + 1;
+        const lineStarts = [];
+        for (let lineStart = firstLineStart; lineStart <= lastLineStart;) {
+            lineStarts.push(lineStart);
+            const nextLine = value.indexOf('\n', lineStart);
+            if (nextLine === -1 || nextLine >= lastLineStart) break;
+            lineStart = nextLine + 1;
+        }
+
+        let indentedValue = value;
+        for (const lineStart of lineStarts.slice().reverse()) {
+            indentedValue = `${indentedValue.slice(0, lineStart)}${indent}${indentedValue.slice(lineStart)}`;
+        }
+        const startShift = lineStarts.filter((lineStart) => lineStart <= selectionStart).length * indent.length;
+        const endShift = lineStarts.filter((lineStart) => lineStart < selectionEnd).length * indent.length;
+        descriptionInput.value = indentedValue;
+        descriptionInput.setSelectionRange(selectionStart + startShift, selectionEnd + endShift);
+        return;
+    }
+
+    if (event.key !== 'Enter' || event.shiftKey || event.ctrlKey || event.altKey || event.metaKey
+        || descriptionInput.selectionStart !== descriptionInput.selectionEnd) return;
+
+    const caret = descriptionInput.selectionStart;
+    const before = descriptionInput.value.slice(0, caret);
+    const lineStart = before.lastIndexOf('\n') + 1;
+    const currentLine = before.slice(lineStart);
+    const emptyMarker = currentLine.match(/^(\s*)([-*+]|\d+[.)])\s*$/);
+    if (emptyMarker) {
+        event.preventDefault();
+        descriptionInput.setRangeText('\n', lineStart, caret, 'end');
+        return;
+    }
+
+    const bullet = currentLine.match(/^(\s*)([-*+])\s+.+$/);
+    const numbered = currentLine.match(/^(\s*)(\d+)[.)]\s+.+$/);
+    if (bullet || numbered) {
+        event.preventDefault();
+        const prefix = bullet
+            ? `\n${bullet[1]}${bullet[2]} `
+            : `\n${numbered[1]}${Number(numbered[2]) + 1}. `;
+        descriptionInput.setRangeText(prefix, caret, caret, 'end');
+    }
 });
 
 document.querySelector('#add-task').addEventListener('click', () => openTaskDialog());

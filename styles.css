@@ -308,6 +308,16 @@ h1 {
     gap: 8px;
 }
 
+.toolbar-icon-actions .icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toolbar-icon-actions .icon-btn > .icon-svg {
+    flex: 0 0 24px;
+}
+
 .category-filter-control {
     position: relative;
     display: inline-flex;
@@ -631,6 +641,26 @@ h1 {
     color: var(--text-soft);
     white-space: pre-wrap;
     word-break: break-word;
+}
+
+.task-description p {
+    margin: 0;
+}
+
+.task-description p + p,
+.task-description p + ul,
+.task-description p + ol,
+.task-description ul + p,
+.task-description ol + p,
+.task-description ul + ol,
+.task-description ol + ul {
+    margin-top: 0.5em;
+}
+
+.task-description ul,
+.task-description ol {
+    margin-bottom: 0;
+    padding-left: 1.5em;
 }
 
 .task-actions {
