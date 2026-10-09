@@ -479,11 +479,15 @@
             warningVisible = true;
         }
 
-        loadingScreen.classList.add('is-hidden');
-        loadingScreen.addEventListener('transitionend', (event) => {
-            if (event.target === loadingScreen && event.propertyName === 'opacity') finishLoading();
-        }, { once: true });
-        window.setTimeout(finishLoading, 600);
+        const beginLoadingFade = () => {
+            loadingScreen.classList.add('is-hidden');
+            loadingScreen.addEventListener('transitionend', (event) => {
+                if (event.target === loadingScreen && event.propertyName === 'opacity') finishLoading();
+            }, { once: true });
+            window.setTimeout(finishLoading, 600);
+        };
+
+        Promise.resolve(window.pwaUpdateReady).then(beginLoadingFade);
 
         document.querySelector('#dismiss-first-run-warning').addEventListener('click', () => {
             try {
