@@ -954,7 +954,8 @@ h1 {
 }
 
 @media (max-width: 640px) {
-    .task-edit-btn {
+    .task-edit-btn,
+    .task-card .badge.category {
         display: none;
     }
 }
