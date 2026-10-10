@@ -760,30 +760,27 @@ h1 {
     font-weight: 700;
     letter-spacing: 0.02em;
     text-transform: capitalize;
+    background: color-mix(in srgb, currentColor 24%, transparent);
 }
 
 .badge.category {
-    background: rgb(from var(--text-soft) r g b / 0.13);
-    color: var(--text-badge);
+    background: rgb(from var(--text-soft) r g b / 0.1);
+    color: var(--text-soft);
 }
 
 .badge.low {
-    background: rgb(from var(--badge-low) r g b / 0.24);
     color: var(--badge-low);
 }
 
 .badge.medium {
-    background: rgb(from var(--badge-medium) r g b / 0.24);
     color: var(--badge-medium);
 }
 
 .badge.high {
-    background: rgb(from var(--badge-high) r g b / 0.28);
     color: var(--badge-high);
 }
 
 .badge.very-high {
-    background: rgb(from var(--badge-very-high) r g b / 0.28);
     color: var(--badge-very-high);
 }
 
@@ -793,17 +790,14 @@ h1 {
 }
 
 .badge.date-overdue {
-    background: rgb(from var(--badge-very-high) r g b / 0.28);
     color: var(--badge-very-high);
 }
 
 .badge.date-tomorrow {
-    background: rgb(from var(--badge-high) r g b / 0.28);
     color: var(--badge-high);
 }
 
 .badge.date-soon {
-    background: rgb(from var(--badge-medium) r g b / 0.24);
     color: var(--badge-medium);
 }
 
