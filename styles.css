@@ -1008,9 +1008,12 @@ h1 {
     position: fixed;
     top: max(16px, env(safe-area-inset-top));
     left: 50%;
+    right: auto;
+    bottom: auto;
     z-index: 1200;
     width: min(520px, calc(100vw - 32px));
     padding: 14px 20px;
+    margin: 0;
     transform: translateX(-50%);
     border: 1px solid var(--success-banner-border);
     border-radius: 14px;

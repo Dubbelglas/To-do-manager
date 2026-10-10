@@ -58,8 +58,14 @@
     function showConfirmation(message) {
         confirmationBanner.textContent = message;
         confirmationBanner.hidden = false;
+        if (typeof confirmationBanner.showPopover === 'function') {
+            if (!confirmationBanner.matches(':popover-open')) confirmationBanner.showPopover();
+        }
         window.clearTimeout(confirmationTimer);
         confirmationTimer = window.setTimeout(() => {
+            if (typeof confirmationBanner.hidePopover === 'function' && confirmationBanner.matches(':popover-open')) {
+                confirmationBanner.hidePopover();
+            }
             confirmationBanner.hidden = true;
         }, 3000);
     }
