@@ -948,6 +948,10 @@ h1 {
     accent-color: var(--accent);
 }
 
+.field.periodic-toggle {
+    width: max-content;
+}
+
 .task-pane {
     margin-top: 18px;
     overflow: hidden;
