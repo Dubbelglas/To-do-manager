@@ -100,10 +100,15 @@ importInput.addEventListener('change', async (event) => {
 
     try {
         const importedTasks = await TaskSpreadsheet.importTasks(file);
+        const previousTasks = state.tasks.map((task) => ({ ...task }));
         state.tasks = [...importedTasks, ...state.tasks];
         const saved = saveTasks();
         render();
-        if (saved) showConfirmation('Spreadsheet imported successfully.');
+        if (saved) showConfirmation('Spreadsheet imported successfully.', () => {
+            state.tasks = previousTasks;
+            saveTasks();
+            render();
+        });
     } catch (error) {
         if (error.code === TaskSpreadsheet.NO_VALID_ROWS) {
             alert('No valid rows were found in the selected file. Use columns: category, priority, task, details, deadline.');

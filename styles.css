@@ -1022,6 +1022,23 @@ h1 {
     text-align: center;
 }
 
+.confirmation-banner:has(.confirmation-undo) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.confirmation-undo {
+    padding: 4px 9px;
+    border: 1px solid currentColor;
+    border-radius: 7px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
 .confirmation-banner[hidden] {
     display: none;
 }

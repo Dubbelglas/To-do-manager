@@ -51,23 +51,54 @@
     const dialogTitle = document.querySelector('#task-dialog-title');
     const submitTaskButton = document.querySelector('#submit-task');
     const confirmationBanner = document.querySelector('#confirmation-banner');
+    const confirmationHome = confirmationBanner.parentElement;
     let categoryValidationAttempted = false;
     let confirmationTimer = null;
     let taskDialogHistoryToken = null;
 
-    function showConfirmation(message) {
-        confirmationBanner.textContent = message;
+    function showConfirmation(message, undoAction = null) {
+        const openDialogs = [...document.querySelectorAll('dialog[open]')];
+        const activeDialog = openDialogs.at(-1);
+        if (activeDialog && !activeDialog.contains(confirmationBanner)) {
+            activeDialog.append(confirmationBanner);
+        } else if (!activeDialog && confirmationBanner.parentElement !== confirmationHome) {
+            confirmationHome.append(confirmationBanner);
+        }
+        confirmationBanner.replaceChildren();
+        if (undoAction) {
+            const messageElement = document.createElement('span');
+            messageElement.textContent = message;
+            const undoButton = document.createElement('button');
+            undoButton.type = 'button';
+            undoButton.className = 'confirmation-undo';
+            undoButton.textContent = 'Undo';
+            undoButton.addEventListener('click', () => {
+                dismissConfirmation();
+                undoAction();
+            }, { once: true });
+            confirmationBanner.append(messageElement, undoButton);
+        } else {
+            confirmationBanner.textContent = message;
+        }
         confirmationBanner.hidden = false;
         if (typeof confirmationBanner.showPopover === 'function') {
             if (!confirmationBanner.matches(':popover-open')) confirmationBanner.showPopover();
         }
         window.clearTimeout(confirmationTimer);
         confirmationTimer = window.setTimeout(() => {
-            if (typeof confirmationBanner.hidePopover === 'function' && confirmationBanner.matches(':popover-open')) {
-                confirmationBanner.hidePopover();
-            }
-            confirmationBanner.hidden = true;
-        }, 3000);
+            dismissConfirmation();
+        }, undoAction ? 5000 : 3000);
+    }
+
+    function dismissConfirmation() {
+        window.clearTimeout(confirmationTimer);
+        if (typeof confirmationBanner.hidePopover === 'function' && confirmationBanner.matches(':popover-open')) {
+            confirmationBanner.hidePopover();
+        }
+        confirmationBanner.hidden = true;
+        if (confirmationBanner.parentElement !== confirmationHome) {
+            confirmationHome.append(confirmationBanner);
+        }
     }
 
     function getDeadlineColorClass(deadline) {

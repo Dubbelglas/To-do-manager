@@ -206,6 +206,9 @@ renameCategoryForm.addEventListener('submit', (event) => {
         return;
     }
 
+    const previousTasks = state.tasks.map((task) => ({ ...task }));
+    const previousCategoryFilter = state.categoryFilter;
+    const previousSelectedCategory = categorySelect.value;
     state.tasks.forEach((task) => {
         if ((task.category || 'General').trim() === oldCategory) task.category = newCategory;
     });
@@ -214,7 +217,13 @@ renameCategoryForm.addEventListener('submit', (event) => {
     const saved = saveTasks();
     closeRenameCategoryDialog();
     render();
-    if (saved) showConfirmation(`Category renamed to ${newCategory}.`);
+    if (saved) showConfirmation(`Category renamed to ${newCategory}.`, () => {
+        state.tasks = previousTasks;
+        state.categoryFilter = previousCategoryFilter;
+        refreshCategoryOptions(previousSelectedCategory === newCategory ? oldCategory : previousSelectedCategory);
+        saveTasks();
+        render();
+    });
 });
 
 for (const taskList of [list, periodicList]) taskList.addEventListener('change', (event) => {
@@ -379,6 +388,8 @@ confirmDeleteButton.addEventListener('click', () => {
         return;
     }
 
+    const previousTasks = state.tasks.map((task) => ({ ...task }));
+    const previouslyExpandedTaskIds = new Set(state.expandedTaskIds);
     for (const task of state.tasks) {
         if (task.completed) state.expandedTaskIds.delete(task.id);
     }
@@ -387,7 +398,12 @@ confirmDeleteButton.addEventListener('click', () => {
     const saved = saveTasks();
     closeDeleteConfirmDialog();
     render();
-    if (saved) showConfirmation(`${removedCount} completed task${removedCount === 1 ? '' : 's'} deleted.`);
+    if (saved) showConfirmation(`${removedCount} completed task${removedCount === 1 ? '' : 's'} deleted.`, () => {
+        state.tasks = previousTasks;
+        previouslyExpandedTaskIds.forEach((id) => state.expandedTaskIds.add(id));
+        saveTasks();
+        render();
+    });
 });
 
 completeVisibleButton.addEventListener('click', () => {
