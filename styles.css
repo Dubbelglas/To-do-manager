@@ -785,8 +785,11 @@ h1 {
     color: var(--badge-level4);
 }
 
+.badge.date {
+    background: transparent;
+}
+
 .badge.date-far-away {
-    background: var(--background-soft);
     color: var(--text-soft);
 }
 
