@@ -307,7 +307,10 @@
         const showNewCategory = categorySelect.value === '__new__';
         newCategoryWrap.classList.toggle('hidden', !showNewCategory);
         newCategoryInput.required = showNewCategory;
+        renameCategoryButton.disabled = showNewCategory || getCategories().length === 0;
     }
+
+    categorySelect.addEventListener('change', updateNewCategoryVisibility);
 
     function getDisplayedTasks() {
         return [
