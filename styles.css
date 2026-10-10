@@ -3,22 +3,23 @@
     --panel: #1d1f1b;
     --text: #f0f1eb;
     --text-soft: #b9bdb2;
+    --background-soft: rgb(from var(--text-soft) r g b / 0.15);
     --text-badge: #d8dbd2;
     --control-bg: rgba(20, 21, 18, 0.82);
     --overlay: rgba(10, 11, 9, 0.82);
     --accent: #facc15;
     --accent-periodic: #84cc16;
     --accent-strong: #eab308;
-    --badge-low: #70e000;
-    --badge-medium: #ffd000;
-    --badge-high: #ff6500;
-    --badge-very-high: #ff2929;
+    --text-on-accent: #24240f;
+    --badge-level1: #70e000;
+    --badge-level2: #ffd000;
+    --badge-level3: #ff6500;
+    --badge-level4: #ff2929;
     --success: #84cc16;
-    --success-banner: #86efac;
+    --success-banner: #84cc16;
     --success-banner-border: rgba(187, 247, 208, 0.35);
     --success-banner-text: #12301d;
     --danger: #ef4444;
-    --text-on-accent: #24240f;
     --danger-text: #fff;
     --checkbox-gray: #a1a1aa;
     --checkbox-fill: #d1d5db;
@@ -760,45 +761,45 @@ h1 {
     font-weight: 700;
     letter-spacing: 0.02em;
     text-transform: capitalize;
-    background: color-mix(in srgb, currentColor 24%, transparent);
+    background: color-mix(in srgb, currentColor 20%, transparent);
 }
 
 .badge.category {
-    background: rgb(from var(--text-soft) r g b / 0.1);
+    background: var(--background-soft);
     color: var(--text-soft);
 }
 
 .badge.low {
-    color: var(--badge-low);
+    color: var(--badge-level1);
 }
 
 .badge.medium {
-    color: var(--badge-medium);
+    color: var(--badge-level2);
 }
 
 .badge.high {
-    color: var(--badge-high);
+    color: var(--badge-level3);
 }
 
 .badge.very-high {
-    color: var(--badge-very-high);
+    color: var(--badge-level4);
 }
 
-.badge.date {
-    background: rgb(from var(--text-soft) r g b / 0.1);
+.badge.date-far-away {
+    background: var(--background-soft);
     color: var(--text-soft);
 }
 
-.badge.date-overdue {
-    color: var(--badge-very-high);
+.badge.date-soon {
+    color: var(--badge-level2);
 }
 
 .badge.date-tomorrow {
-    color: var(--badge-high);
+    color: var(--badge-level3);
 }
 
-.badge.date-soon {
-    color: var(--badge-medium);
+.badge.date-overdue {
+    color: var(--badge-level4);
 }
 
 .editor-grid {

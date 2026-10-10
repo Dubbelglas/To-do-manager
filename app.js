@@ -111,7 +111,7 @@
         if (daysUntil < 0) return 'date-overdue';
         if (daysUntil < 1) return 'date-tomorrow';
         if (daysUntil <= 7) return 'date-soon';
-        return '';
+        return 'date-far-away';
     }
 
     function updateCategoryValidation() {
@@ -357,18 +357,19 @@
                 <div class="todo-main">
                     <input type="checkbox" data-action="toggle" data-id="${task.id}" aria-label="Mark ${escapeHtml(task.name)} complete" ${task.completed ? 'checked' : ''} />
                     ${task.description
-            ? `<button type="button" class="todo-text task-name-text task-name-toggle" data-action="toggle-details" aria-controls="task-details-${escapeHtml(task.id)}" aria-expanded="${state.expandedTaskIds.has(task.id)}">${escapeHtml(task.name)}</button>`
-            : `<span class="todo-text task-name-text">${escapeHtml(task.name)}</span>`}
+                ? `<button type="button" class="todo-text task-name-text task-name-toggle" data-action="toggle-details" aria-controls="task-details-${escapeHtml(task.id)}" aria-expanded="${state.expandedTaskIds.has(task.id)}">${escapeHtml(task.name)}</button>`
+                : `<span class="todo-text task-name-text">${escapeHtml(task.name)}</span>`}
                     ${task.description ? `<button type="button" class="details-indicator" data-action="toggle-details" aria-controls="task-details-${escapeHtml(task.id)}" aria-expanded="${state.expandedTaskIds.has(task.id)}" aria-label="Show details for ${escapeHtml(task.name)}" ${state.expandedTaskIds.has(task.id) ? 'hidden' : ''}>&hellip;</button>` : ''}
                 </div>
 
-                <!-- Badge: deadline -->
+                <!-- Badge: category / priority / deadline -->
                 <div class="meta">
                     <span class="badge category">${escapeHtml(task.category || 'General')}</span>
                     <span class="badge ${task.priority}">${({ low: 'Low', medium: 'Med', high: 'Hi', 'very-high': 'vHi' })[task.priority]}</span>
                     ${task.deadline ? `<span class="badge date ${getDeadlineColorClass(task.deadline)}">${formatDate(task.deadline)}</span>` : ''}
                 </div>
 
+                <!-- Edit button -->
                 <button type="button" class="secondary-btn icon-btn task-edit-btn" data-action="edit" data-id="${task.id}" aria-label="Edit ${escapeHtml(task.name)}" title="Edit task">
                     <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="m15 5 4 4M4 20l4-.8L19.2 8a2.1 2.1 0 0 0-3-3L5 16.2 4 20Z" />
