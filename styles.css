@@ -976,7 +976,7 @@ h1 {
 
 .todo-item:not(:first-child)::before {
     border-color: var(--task-separator-color);
-    opacity: 0.55;
+    opacity: 0.25;
 }
 
 .task-pane-heading {
