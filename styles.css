@@ -1054,6 +1054,7 @@ h1 {
     flex: 0 0 56px;
     padding: 0;
     line-height: 1;
+    border: 2px solid var(--bg);
     border-radius: 50%;
     box-shadow: 0 8px 24px var(--shadow);
 }
@@ -1079,11 +1080,11 @@ h1 {
 
 .add-task-icon::before {
     width: 22px;
-    height: 2px;
+    height: 3px;
 }
 
 .add-task-icon::after {
-    width: 2px;
+    width: 3px;
     height: 22px;
 }
 

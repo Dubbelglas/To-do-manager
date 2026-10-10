@@ -304,7 +304,7 @@ if (supportsLongPress) {
             taskList.addEventListener(eventName, clearLongPress);
         }
         taskList.addEventListener('contextmenu', (event) => {
-            if (event.target.closest('.todo-item')) event.preventDefault();
+            if (event.target.closest('.todo-item') && !event.target.closest('.task-details')) event.preventDefault();
         });
     }
 }
@@ -324,7 +324,14 @@ for (const taskList of [list, periodicList]) taskList.addEventListener('click', 
         return;
     }
 
+    // Follow links in the Details field without letting the card's hide-on-click
+    // behavior consume the same click.
+    if (event.target.closest('.task-details a')) return;
+
     if (event.target.closest('.task-details')) {
+        // Long pressing selects text on touch devices. The generated click must
+        // not collapse the details while the user is selecting that text.
+        if (window.getSelection()?.toString()) return;
         toggleTaskDetails(item);
         return;
     }

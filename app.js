@@ -209,6 +209,26 @@
     }
 
     function renderDescription(description) {
+        const renderLinkedText = (text) => {
+            const urlPattern = /(?:\bhttps?:\/\/[^\s<]+|\b(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:nl|com|de|org|fr|co\.uk)(?:\/[^\s<]*)?)/gi;
+            let result = '';
+            let lastIndex = 0;
+            for (const match of String(text).matchAll(urlPattern)) {
+                let url = match[0];
+                let trailing = '';
+                while (/[.,!?;:)]$/.test(url)) {
+                    trailing = url.slice(-1) + trailing;
+                    url = url.slice(0, -1);
+                }
+                if (!url) continue;
+                const href = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+                const start = match.index;
+                result += escapeHtml(String(text).slice(lastIndex, start));
+                result += `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(url)}</a>${escapeHtml(trailing)}`;
+                lastIndex = start + match[0].length;
+            }
+            return result + escapeHtml(String(text).slice(lastIndex));
+        };
         const lines = String(description).replace(/\r\n?/g, '\n').split('\n');
         const blocks = [];
         const getListItem = (line) => {
@@ -247,7 +267,7 @@
                     nestedHtml += nested.html;
                     index = nested.nextIndex;
                 }
-                items.push(`<li>${escapeHtml(item.text)}${nestedHtml}</li>`);
+                items.push(`<li>${renderLinkedText(item.text)}${nestedHtml}</li>`);
             }
             return { html: `<${type}>${items.join('')}</${type}>`, nextIndex: index };
         };
@@ -272,7 +292,7 @@
                 paragraph.push(lines[index]);
                 index += 1;
             }
-            blocks.push(`<p>${paragraph.map(escapeHtml).join('<br>')}</p>`);
+            blocks.push(`<p>${paragraph.map(renderLinkedText).join('<br>')}</p>`);
         }
         return blocks.join('');
     }
